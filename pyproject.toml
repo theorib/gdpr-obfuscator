@@ -1,0 +1,30 @@
+[project]
+name = "gdpr-obfuscator"
+version = "1.0.0"
+description = "The purpose of this project is to create a general-purpose tool to process data being ingested to AWS and intercept personally identifiable information (PII). All information stored by Northcoders data projects should be for bulk data analysis only. Consequently, there is a requirement under GDPR to ensure that all data containing information that can be used to identify an individual should be anonymised."
+readme = "README.md"
+requires-python = ">=3.13"
+dependencies = []
+
+[dependency-groups]
+dev = [
+    "moto>=5.1.13",
+    "pytest>=8.4.2",
+    "pytest-cov>=7.0.0",
+    "pytest-testdox>=3.1.0",
+    "ruff>=0.13.1",
+]
+
+[tool.pytest.ini_options]
+addopts = "-vvv -rP --testdox"
+pythonpath = "."
+filterwarnings = "ignore::DeprecationWarning"
+
+[tool.ruff]
+line-length = 88
+
+[tool.ruff.lint]
+extend-select = ["I"]
+
+[tool.ruff.format]
+docstring-code-format = true
