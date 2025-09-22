@@ -17,6 +17,8 @@ This is a GDPR Obfuscator Project - a Python library for processing data ingeste
 ## Development Standards
 
 - **Language**: Python
+- **Package Manager**: uv (https://docs.astral.sh/uv/)
+- **Formatter & Linter**: ruff (https://docs.astral.sh/ruff/)
 - **Testing**: Unit tested with pytest/unittest/nose
 - **Code Quality**: PEP-8 compliant
 - **Security**: Security vulnerability testing required
@@ -104,7 +106,10 @@ Follow the Conventional Commits specification with gitmoji for all commits:
 
 ## Development Commands
 
-*Note: Commands will be added as the project structure is established*
+- **Install dependencies**: `uv sync`
+- **Format code**: `uv run ruff format`
+- **Lint code**: `uv run ruff check`
+- **Run tests**: `uv run pytest`
 
 ## Future Extensions
 
