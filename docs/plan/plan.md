@@ -5,7 +5,7 @@ This file should be used as a living document for the development of this projec
 ## Project Schedule
 
 - Day 1: Planning, research and initial project setup
-- Day 2:
+- Day 2: Start project implementation.
 
 ## Project Decisions to be made:
 

@@ -1,5 +1,5 @@
 name: gdpr-obfuscator-infrastructure
-description: Test deployment for the GDPR Obfuscator project
+description: Infrastructure deployment for a Python library for obfuscating personally identifiable information (PII) in CSV files for GDPR compliance
 runtime:
   name: python
   options:
