@@ -15,17 +15,13 @@ sync: uv ## Install dependencies
 test:  ## Run tests
 	uv run pytest
 
-.PHONY: test-main
-test-main:  ## Run tests
-	uv run pytest packages/gdpr-obfuscator/tests
-
 .PHONY: lint
 lint:  ## Run Ruff linter
-	uv run ruff check ./packages/*/src ./packages/*/tests --fix
+	uv run ruff check ./src ./tests --fix
 
 .PHONY: fmt
 fmt:  ## Run Ruff formatter
-	uv run ruff format --verbose ./packages/*/src ./packages/*/tests
+	uv run ruff format --verbose ./src ./tests
 
 .PHONY: fix
 fix:  fmt lint ## Run Ruff linter and formatter
