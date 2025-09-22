@@ -32,12 +32,14 @@ This is a GDPR Obfuscator Project - a Python library for processing data ingeste
 
 ## Architecture
 
-The project is in initial setup phase. When implemented, it should follow these patterns:
+The project is now structured as a proper Python package with standard packaging conventions. All code interventions should respect this package structure and follow Python packaging best practices.
 
-- **Core Module**: Main obfuscation logic for CSV processing
-- **AWS Integration**: boto3 SDK for S3 operations
-- **CLI Interface**: Optional command-line interface for demonstration
-- **Library Interface**: Primary integration point for other Python applications
+When implemented, it should follow these patterns:
+
+- **Core Package**: Main obfuscation logic organized in `gdpr_obfuscator/` package directory
+- **AWS Integration**: boto3 SDK integration within the package modules
+- **CLI Interface**: Optional command-line interface accessible via package entry points
+- **Library Interface**: Primary integration point through proper package imports and public API
 
 ## Example Usage Pattern
 
@@ -128,6 +130,7 @@ Follow the Conventional Commits specification with gitmoji for all commits:
 ## Technical Specifications
 
 - **AWS SDK**: Expected to use boto3 for S3 operations
+- **Infrastructure as Code**: Pulumi for AWS infrastructure management and deployment automation
 - **Testing Framework**: pytest with pytest-testdox and pytest-cov extensions, plus Moto for AWS service mocking
 - **Deployment Compatibility**: EC2, ECS, or Lambda within AWS ecosystem
 - **CLI Demo**: Optional command-line interface for demonstration purposes
