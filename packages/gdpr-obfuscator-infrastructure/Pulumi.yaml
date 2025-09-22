@@ -1,0 +1,10 @@
+name: gdpr-obfuscator-infrastructure
+description: Test deployment for the GDPR Obfuscator project
+runtime:
+  name: python
+  options:
+    toolchain: uv
+config:
+  pulumi:tags:
+    value:
+      pulumi:template: aws-python

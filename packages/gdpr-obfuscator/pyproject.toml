@@ -1,0 +1,14 @@
+[project]
+name = "gdpr-obfuscator"
+version = "1.0.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.13"
+dependencies = [
+    "polars==1.33.1",
+]
+
+[dependency-groups]
+dev = [
+    "moto==5.1.13"
+]
