@@ -1,7 +1,6 @@
 """Main obfuscation functionality for GDPR compliance."""
 
-import polars as pl
-from typing import List, Dict, Any
+from typing import Dict, List
 
 
 def gdpr_obfuscator(file_to_obfuscate: str, pii_fields: List[str]) -> bytes:
@@ -57,6 +56,8 @@ def _validate_s3_path(s3_path: str) -> Dict[str, str]:
 
     path_parts = s3_path[5:].split("/", 1)
     if len(path_parts) != 2:
-        raise ValueError(f"Invalid S3 path: {s3_path}. Must be in format 's3://bucket/key'")
+        raise ValueError(
+            f"Invalid S3 path: {s3_path}. Must be in format 's3://bucket/key'"
+        )
 
     return {"bucket": path_parts[0], "key": path_parts[1]}
