@@ -6,6 +6,8 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 This is a GDPR Obfuscator Project - a Python library for processing data ingested to AWS and intercepting personally identifiable information (PII). The tool obfuscates sensitive data in CSV files (with future extensions for JSON and Parquet) while maintaining data structure for bulk analysis.
 
+**Context**: All information stored by Northcoders data projects should be for bulk data analysis only. Under GDPR requirements, all data containing information that can be used to identify an individual must be anonymized.
+
 ## Key Requirements
 
 - **Input**: JSON string containing S3 location of CSV file and field names to obfuscate
@@ -13,6 +15,8 @@ This is a GDPR Obfuscator Project - a Python library for processing data ingeste
 - **Primary Use Case**: Library module for integration into Python codebases
 - **Target Platform**: AWS ecosystem (EC2, ECS, Lambda)
 - **Performance**: Handle files up to 1MB within 1 minute runtime
+- **Data Format**: Data records will be supplied with a primary key
+- **Invocation**: Expected to be invoked via EventBridge, Step Functions, or Airflow
 
 ## Development Standards
 
@@ -23,7 +27,7 @@ This is a GDPR Obfuscator Project - a Python library for processing data ingeste
 - **Code Quality**: PEP-8 compliant
 - **Security**: Security vulnerability testing required
 - **Documentation**: Code documentation required
-- **Dependencies**: Must not exceed Python Lambda memory limits
+- **Dependencies**: Complete module size must not exceed Python Lambda memory limits
 - **Credentials**: No hardcoded credentials allowed
 
 ## Architecture
@@ -113,6 +117,17 @@ Follow the Conventional Commits specification with gitmoji for all commits:
 
 ## Future Extensions
 
-- JSON file format support
-- Parquet file format support
+- JSON file format support (output format same as input)
+- Parquet file format support (output format same as input)
 - Enhanced obfuscation algorithms
+
+## Project Timeline
+
+- **Due Date**: Maximum four weeks from commencement
+
+## Technical Specifications
+
+- **AWS SDK**: Expected to use boto3 for S3 operations
+- **Testing Frameworks**: Pytest, Unittest, or Nose
+- **Deployment Compatibility**: EC2, ECS, or Lambda within AWS ecosystem
+- **CLI Demo**: Optional command-line interface for demonstration purposes
