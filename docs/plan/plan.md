@@ -37,42 +37,39 @@ The project will use [pytest](https://docs.pytest.org/en/stable/) for testing wi
 
 ## Project Structure
 
-Initial dummy project structure
+Current project structure (updated to reflect single package layout):
 
 ```
 gdpr-obfuscator/
 ├── src/
 │   └── gdpr_obfuscator/
 │       ├── __init__.py
-│       ├── core/
-│       │   ├── __init__.py
-│       │   ├── obfuscator.py
-│       │   └── processors/
-│       ├── aws/
-│       │   ├── __init__.py
-│       │   └── s3_handler.py
-│       └── cli/
+│       └── core/
 │           ├── __init__.py
-│           └── main.py
-├── infrastructure/
+│           └── obfuscator.py
+├── infrastructure/               # Standalone Pulumi project
 │   ├── __main__.py
 │   ├── Pulumi.yaml
 │   ├── Pulumi.dev.yaml
-│   ├── Pulumi.staging.yaml
-│   ├── Pulumi.prod.yaml
-│   ├── pyproject.toml          # Infrastructure-specific uv project
-│   ├── uv.lock                 # Infrastructure lock file
-│   └── modules/
-│       ├── s3.py
-│       ├── lambda.py
-│       └── iam.py
+│   ├── README.md
+│   └── requirements.txt         # Infrastructure dependencies
+├── tests/
+│   └── __init__.py
+├── docs/
+│   └── plan/
+│       └── plan.md
 ├── .env
 ├── .gitignore
 ├── .python-version
-├── tests/
-├── docs/
 ├── Makefile
-├── pyproject.toml              # Main application uv project
+├── pyproject.toml              # Main package configuration
 ├── README.md
-└── uv.lock                     # Main application lock file
+└── uv.lock                     # Dependency lock file
 ```
+
+**Key Changes:**
+- Simplified from uv workspace to single package structure
+- Infrastructure is now a standalone Pulumi project
+- Source code organized under `src/gdpr_obfuscator/`
+- Core obfuscation functionality implemented in `core/obfuscator.py`
+- Tests directory prepared for unit and integration tests
