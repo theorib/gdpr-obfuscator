@@ -100,6 +100,7 @@ Follow the Conventional Commits specification with gitmoji for all commits:
 - Each commit should be self-contained and not break the codebase
 - Prefer multiple small commits over large monolithic commits
 - This approach enables easier code review, rollback, and issue identification
+- **Do NOT include "Co-Authored-By: Claude" in commit messages** - keep commits clean without AI attribution
 
 ## Development Commands
 
