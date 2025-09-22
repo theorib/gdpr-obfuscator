@@ -19,14 +19,14 @@ This file should be used as a living document for the development of this projec
 
 ## Project Setup todo list:
 
-- [ ] Install and setup [uv](https://docs.astral.sh/uv/)
-- [ ] Install and setup [ruff](https://docs.astral.sh/ruff/)
+- [x] Install and setup [uv](https://docs.astral.sh/uv/)
+- [x] Install and setup [ruff](https://docs.astral.sh/ruff/)
 - [ ] Install and set up [bandit](https://bandit.readthedocs.io/en/latest/index.html)
-- [ ] Install and set up [Pulumi](https://www.pulumi.com/product/infrastructure-as-code/)
-- [ ] Install and set up [pytest](https://docs.pytest.org/en/stable/) with:
-  - [ ] pytest-testdox
-  - [ ] pytest-cov
-- [ ] Create dummy data
+- [x] Install and set up [Pulumi](https://www.pulumi.com/product/infrastructure-as-code/)
+- [x] Install and set up [pytest](https://docs.pytest.org/en/stable/) with:
+  - [x] pytest-testdox
+  - [x] pytest-cov
+- [x] Create test data
 - [ ] Create a make file with main project commands following the syntax and features proposed in [Makefile based on uv](https://mmngreco.dev/posts/uv-makefile/)
 - [ ] Setup [Moto](https://docs.getmoto.org/en/latest/docs/getting_started.html) for testing AWS interactions and setup fixtures that include the data to be ingested.
 - [ ] Find a time management app
@@ -68,6 +68,7 @@ gdpr-obfuscator/
 ```
 
 **Key Changes:**
+
 - Simplified from uv workspace to single package structure
 - Infrastructure is now a standalone Pulumi project
 - Source code organized under `src/gdpr_obfuscator/`
