@@ -1,0 +1,11 @@
+id,name,email_address,phone_number,date_of_birth,address,salary,department,hire_date,project_code,status,region
+1,John Smith,john.smith@email.com,+44-20-7946-0958,1985-03-15,"123 Main St, London, UK",75000,Engineering,2020-01-15,PROJ-001,Active,North
+2,Sarah Johnson,sarah.j@company.co.uk,+44-161-496-0077,1990-07-22,"456 Oak Ave, Manchester, UK",68000,Marketing,2019-08-10,PROJ-002,Active,North
+3,Michael Brown,m.brown@workplace.org,+44-131-496-0031,1988-11-30,"789 Pine Rd, Edinburgh, UK",82000,Engineering,2018-03-22,PROJ-001,Inactive,North
+4,Emma Wilson,emma.wilson@email.net,+44-117-496-0099,1992-05-18,"321 Elm St, Bristol, UK",59000,HR,2021-06-01,PROJ-003,Active,South
+5,David Jones,d.jones@company.com,+44-113-496-0045,1987-09-12,"654 Maple Dr, Leeds, UK",71000,Sales,2017-11-30,PROJ-002,Active,North
+6,Lisa Davis,lisa.davis@work.co.uk,+44-121-496-0088,1991-01-25,"987 Birch Ln, Birmingham, UK",63000,Marketing,2020-09-15,PROJ-004,Active,Central
+7,Robert Taylor,r.taylor@email.org,+44-151-496-0066,1989-12-03,"147 Cedar Ct, Liverpool, UK",77000,Engineering,2019-02-28,PROJ-001,Active,North
+8,Jennifer Miller,jen.miller@company.net,+44-114-496-0022,1993-08-07,"258 Ash Way, Sheffield, UK",55000,Support,2022-01-10,PROJ-005,Active,North
+9,James Anderson,j.anderson@workplace.com,+44-191-496-0033,1986-04-14,"369 Spruce St, Newcastle, UK",84000,Engineering,2016-07-18,PROJ-001,Inactive,North
+10,Maria Garcia,m.garcia@email.co.uk,+44-29-2048-0011,1994-10-29,"741 Willow Rd, Cardiff, UK",61000,Design,2021-03-05,PROJ-006,Active,Wales

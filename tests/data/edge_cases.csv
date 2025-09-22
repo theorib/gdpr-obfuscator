@@ -1,0 +1,12 @@
+id,name,email_address,phone_number,date_of_birth,address,salary,department,hire_date,project_code,status,region
+1,"O'Connor, Mary-Jane",mary.jane@email.com,,1985-02-29,"123 ""Main"" St, London, UK",,Engineering,2020-01-15,PROJ-001,Active,North
+2,,empty.user@email.com,+44-20-7946-0958,,"",0,Marketing,,PROJ-002,,
+3,"José María García-López",jose.garcia@email.com,+34-91-123-4567,1990-12-31,"Calle Principal, 123, Madrid, España",75000,Engineering,2019-03-22,PROJ-001,Active,International
+4,"Smith, John Jr.",j.smith@email.com,+1-555-123-4567,1988-13-01,"456 Oak St, Apt #2B, New York, NY 10001",82000,Sales,2018-02-30,PROJ-003,Inactive,International
+5,"李小明",xiaoming.li@email.com,+86-138-0013-8000,2000-01-01,"北京市朝阳区建国门外大街1号",90000,Engineering,2022-06-01,PROJ-004,Active,Asia
+6,"مُحَمَّد أَحْمَد",mohammed@email.com,+971-50-123-4567,1995-06-15,"شارع الشيخ زايد، دبي، الإمارات العربية المتحدة",65000,Marketing,2021-09-10,PROJ-005,Active,Middle East
+7,"Müller, François-André",muller@email.com,"+33 1 42 86 83 26",1992-02-30,"123 Rue de la Paix, 75001 Paris, France",70000,Design,2020-11-31,PROJ-006,Active,Europe
+8,"Test@User",test.user@domain.co.uk,"0044 (0)20 7946 0958",1985-00-00,"Line 1
+Line 2, City",,"",2020-01-01,PROJ-007,Active,UK
+9,"Surname",first.last+tag@subdomain.email.com,"",,"""""",NULL,NULL,,PROJ-008,NULL,
+10,"Robert'); DROP TABLE users;--",bobby.tables@xkcd.com,+44-20-INVALID,9999-99-99,"'; DELETE FROM addresses; --",999999,Security,1900-01-01,PROJ-999,'; DROP TABLE projects;--,Injection
