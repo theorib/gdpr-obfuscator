@@ -23,7 +23,7 @@ This is a GDPR Obfuscator Project - a Python library for processing data ingeste
 - **Language**: Python
 - **Package Manager**: uv (https://docs.astral.sh/uv/)
 - **Formatter & Linter**: ruff (https://docs.astral.sh/ruff/)
-- **Testing**: Unit tested with pytest/unittest/nose
+- **Testing**: Unit tested with pytest, including pytest-testdox and pytest-cov for test coverage, and Moto for AWS interaction testing
 - **Code Quality**: PEP-8 compliant
 - **Security**: Security vulnerability testing required
 - **Documentation**: Code documentation required
@@ -128,6 +128,6 @@ Follow the Conventional Commits specification with gitmoji for all commits:
 ## Technical Specifications
 
 - **AWS SDK**: Expected to use boto3 for S3 operations
-- **Testing Frameworks**: Pytest, Unittest, or Nose
+- **Testing Framework**: pytest with pytest-testdox and pytest-cov extensions, plus Moto for AWS service mocking
 - **Deployment Compatibility**: EC2, ECS, or Lambda within AWS ecosystem
 - **CLI Demo**: Optional command-line interface for demonstration purposes
