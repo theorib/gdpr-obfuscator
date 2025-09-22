@@ -27,7 +27,7 @@ This file should be used as a living document for the development of this projec
   - [x] pytest-testdox
   - [x] pytest-cov
 - [x] Create test data
-- [ ] Create a make file with main project commands following the syntax and features proposed in [Makefile based on uv](https://mmngreco.dev/posts/uv-makefile/)
+- [x] Create a make file with main project commands following the syntax and features proposed in [Makefile based on uv](https://mmngreco.dev/posts/uv-makefile/)
 - [ ] Setup [Moto](https://docs.getmoto.org/en/latest/docs/getting_started.html) for testing AWS interactions and setup fixtures that include the data to be ingested.
 - [ ] Find a time management app
 
