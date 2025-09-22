@@ -8,9 +8,7 @@ version = "1.0.0"
 description = "A Python library for obfuscating personally identifiable information (PII) in CSV files for GDPR compliance"
 readme = "README.md"
 requires-python = ">=3.13"
-authors = [
-    {name = "Theo Ribeiro"}
-]
+authors = [{ name = "Theo Ribeiro" }]
 classifiers = [
     "Development Status :: 3 - Alpha",
     "Intended Audience :: Developers",
@@ -23,9 +21,7 @@ classifiers = [
 ]
 keywords = ["gdpr", "pii", "obfuscation", "privacy", "data-protection", "csv"]
 
-dependencies = [
-    "polars==1.33.1",
-]
+dependencies = ["polars==1.33.1"]
 
 [dependency-groups]
 dev = [
