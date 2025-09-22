@@ -21,7 +21,7 @@ This file should be used as a living document for the development of this projec
 
 - [x] Install and setup [uv](https://docs.astral.sh/uv/)
 - [x] Install and setup [ruff](https://docs.astral.sh/ruff/)
-- [ ] Install and set up [bandit](https://bandit.readthedocs.io/en/latest/index.html)
+- [x] Install and set up [bandit](https://bandit.readthedocs.io/en/latest/index.html)
 - [x] Install and set up [Pulumi](https://www.pulumi.com/product/infrastructure-as-code/)
 - [x] Install and set up [pytest](https://docs.pytest.org/en/stable/) with:
   - [x] pytest-testdox
