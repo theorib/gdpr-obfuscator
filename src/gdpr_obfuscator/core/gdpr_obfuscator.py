@@ -1,6 +1,9 @@
 """Main obfuscation functionality for GDPR compliance."""
 
-from typing import List
+from typing import List, Tuple
+
+import boto3
+from botocore.exceptions import ClientError
 
 
 def gdpr_obfuscator(file_to_obfuscate: str, pii_fields: List[str]) -> bytes:
@@ -19,4 +22,24 @@ def gdpr_obfuscator(file_to_obfuscate: str, pii_fields: List[str]) -> bytes:
         FileNotFoundError: If the specified file doesn't exist (invalid s3 path)
         KeyError: If specified PII fields are not found in the CSV file
     """
-    return b""
+    s3_client = boto3.client("s3")
+    bucket, key = get_parse_s3_path(file_to_obfuscate)
+
+    response = s3_client.get_object(Bucket=bucket, Key=key)
+    file = response["Body"].read()
+    return file
+
+
+def get_parse_s3_path(s3_path: str) -> Tuple[str, str]:
+    prefix = "s3://"
+    sanitized_s3_path = s3_path.strip()
+    if not s3_path:
+        raise FileNotFoundError("Invalid S3 path: Empty path string")
+    if not sanitized_s3_path.startswith(prefix):
+        raise FileNotFoundError('Invalid S3 path: Missing or malformed "s3://" prefix')
+
+    base_string = sanitized_s3_path.strip().removeprefix(prefix)
+    bucket_name = base_string.split("/")[0]
+    key = base_string.removeprefix(bucket_name + "/")
+
+    return bucket_name, key
