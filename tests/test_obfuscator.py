@@ -58,7 +58,7 @@ class TestGDPRObfuscator:
         file_to_obfuscate = (
             f"s3://{mock_aws_bucket_name}/{test_files['csv']['simple_pii_data']['key']}"
         )
-        pii_fields = ["email_address"]
+        pii_fields = test_files["csv"]["simple_pii_data"]["pii_fields"]
         expected = get_test_file(
             test_files["csv"]["simple_pii_data"]["result_local_path"]
         )
@@ -66,30 +66,94 @@ class TestGDPRObfuscator:
         result = gdpr_obfuscator(file_to_obfuscate, pii_fields)
         assert result == expected
 
-    @pytest.mark.skip
+    # @pytest.mark.skip
     @pytest.mark.it(
         "check that a csv file with multiple matching columns to be obfuscated returns a valid csv file with data from those columns obfuscated"
     )
-    def test_csv_with_multiple_matching_columns(self):
-        pass
+    def test_csv_with_multiple_matching_columns(
+        self,
+        s3_client_with_files,
+        test_files,
+        get_test_file,
+        mock_aws_bucket_name,
+    ):
+        file_to_obfuscate = f"s3://{mock_aws_bucket_name}/{test_files['csv']['complex_pii_data']['key']}"
+        pii_fields = test_files["csv"]["complex_pii_data"]["pii_fields"]
+        expected = get_test_file(
+            test_files["csv"]["complex_pii_data"]["result_local_path"]
+        )
 
-    @pytest.mark.skip
+        result = gdpr_obfuscator(file_to_obfuscate, pii_fields)
+        assert result == expected
+
+    # @pytest.mark.skip
+    @pytest.mark.it(
+        "check that if the pii_fields columns are in a different order than the csv file that the obfuscation works and mantains the column order of the original file"
+    )
+    def test_column_order(
+        self,
+        s3_client_with_files,
+        test_files,
+        get_test_file,
+        mock_aws_bucket_name,
+    ):
+        file_to_obfuscate = f"s3://{mock_aws_bucket_name}/{test_files['csv']['complex_pii_data']['key']}"
+        pii_fields = [
+            "phone_number",
+            "email_address",
+            "name",
+            "address",
+        ]
+        expected = get_test_file(
+            test_files["csv"]["complex_pii_data"]["result_local_path"]
+        )
+
+        result = gdpr_obfuscator(file_to_obfuscate, pii_fields)
+        assert result == expected
+
+    # @pytest.mark.skip
     @pytest.mark.it(
         "check that a csv file with non standard characters is processed correctly"
     )
-    def test_csv_with_non_standard_characters(self):
-        pass
+    def test_csv_with_non_standard_characters(
+        self,
+        s3_client_with_files,
+        test_files,
+        get_test_file,
+        mock_aws_bucket_name,
+    ):
+        file_to_obfuscate = f"s3://{mock_aws_bucket_name}/{test_files['csv']['edge_cases_non_standard_chars']['key']}"
+        pii_fields = test_files["csv"]["edge_cases_non_standard_chars"]["pii_fields"]
+        expected = get_test_file(
+            test_files["csv"]["edge_cases_non_standard_chars"]["result_local_path"]
+        )
 
-    @pytest.mark.skip
+        result = gdpr_obfuscator(file_to_obfuscate, pii_fields)
+        assert result == expected
+
+    # @pytest.mark.skip
     @pytest.mark.it(
         "check that a csv file with missing data in some rows is processed correctly"
     )
-    def test_csv_with_missing_data(self):
-        pass
+    def test_csv_with_missing_data(
+        self,
+        s3_client_with_files,
+        test_files,
+        get_test_file,
+        mock_aws_bucket_name,
+    ):
+        file_to_obfuscate = f"s3://{mock_aws_bucket_name}/{test_files['csv']['edge_cases_missing_data']['key']}"
+        pii_fields = test_files["csv"]["edge_cases_missing_data"]["pii_fields"]
+        expected = get_test_file(
+            test_files["csv"]["edge_cases_missing_data"]["result_local_path"]
+        )
+
+        result = gdpr_obfuscator(file_to_obfuscate, pii_fields)
+        assert result == expected
 
     @pytest.mark.skip
-    @pytest.mark.it("check that an empty csv file raises a ValueError exception")
-    def test_empty_csv_exception(self):
+    @pytest.mark.it("check that an empty file raises a ValueError exception")
+    def test_empty_file_exception(self):
         pass
 
     @pytest.mark.skip

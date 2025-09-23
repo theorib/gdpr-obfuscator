@@ -32,7 +32,6 @@ def gdpr_obfuscator(file_to_obfuscate: str, pii_fields: List[str]) -> bytes:
     # pprint(response)
     file = response["Body"].read()
 
-    # Check if original file has trailing newline
     has_trailing_newline = file.endswith(b"\n")
 
     df = pl.read_csv(source=file)
@@ -44,7 +43,6 @@ def gdpr_obfuscator(file_to_obfuscate: str, pii_fields: List[str]) -> bytes:
     df_obfuscated.write_csv(file=buffer)
     result = buffer.getvalue()
 
-    # Match original file's trailing newline behavior
     if not has_trailing_newline and result.endswith(b"\n"):
         result = result[:-1]
 
