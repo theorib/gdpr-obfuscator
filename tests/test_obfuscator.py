@@ -20,9 +20,9 @@ class TestGDPRObfuscator:
         test_files,
     ):
         file_to_obfuscate = (
-            f"s3://{mock_aws_bucket_name}/{test_files['csv']['sample_pii_data']['key']}"
+            f"s3://{mock_aws_bucket_name}/{test_files['csv']['simple_pii_data']['key']}"
         )
-        pii_fields = ["name", "email"]
+        pii_fields = ["name", "email_address"]
         result = gdpr_obfuscator(file_to_obfuscate, pii_fields)
         assert isinstance(result, bytes)
 
@@ -38,18 +38,33 @@ class TestGDPRObfuscator:
         mock_aws_bucket_name,
     ):
         file_to_obfuscate = f"s3://{mock_aws_bucket_name}/{test_files['csv']['edge_cases_no_rows']['key']}"
-        pii_fields = ["name", "email"]
+        pii_fields = ["name", "email_address"]
         expected = get_test_file(test_files["csv"]["edge_cases_no_rows"]["local_path"])
 
         result = gdpr_obfuscator(file_to_obfuscate, pii_fields)
         assert result == expected
 
-    @pytest.mark.skip
+    # @pytest.mark.skip
     @pytest.mark.it(
         "check that a csv file with one matching column to be obfuscated returns a valid csv file with data from that column obfuscated"
     )
-    def test_csv_with_matching_column(self):
-        pass
+    def test_csv_with_matching_column(
+        self,
+        s3_client_with_files,
+        test_files,
+        get_test_file,
+        mock_aws_bucket_name,
+    ):
+        file_to_obfuscate = (
+            f"s3://{mock_aws_bucket_name}/{test_files['csv']['simple_pii_data']['key']}"
+        )
+        pii_fields = ["email_address"]
+        expected = get_test_file(
+            test_files["csv"]["simple_pii_data"]["result_local_path"]
+        )
+
+        result = gdpr_obfuscator(file_to_obfuscate, pii_fields)
+        assert result == expected
 
     @pytest.mark.skip
     @pytest.mark.it(
@@ -96,7 +111,7 @@ class TestGDPRObfuscator:
     def test_file_to_obfuscate_format(self):
         pass
 
-    # @pytest.mark.skip
+    @pytest.mark.skip
     @pytest.mark.it(
         "check that it raises an exception if there is a problem with the s3 connnection"
     )
