@@ -1,0 +1,3 @@
+id,name,email_address,phone_number,date_of_birth,address,salary,department,hire_date,project_code,status,region
+1,***,***,***,1985-02-29,***,,Engineering,2020-01-15,PROJ-001,Active,North
+2,***,***,***,,***,0,Marketing,,PROJ-002,,

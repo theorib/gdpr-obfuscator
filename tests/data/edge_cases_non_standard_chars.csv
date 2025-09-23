@@ -1,0 +1,5 @@
+id,name,email_address,phone_number,date_of_birth,address,salary,department,hire_date,project_code,status,region
+1,José María García-López,jose.garcia@email.com,+34-91-123-4567,1990-12-31,"Calle Principal, 123, Madrid, España",75000,Engineering,2019-03-22,PROJ-001,Active,International
+2,"Smith, John Jr.",j.smith@email.com,+1-555-123-4567,1988-13-01,"456 Oak St, Apt #2B, New York, NY 10001",82000,Sales,2018-02-30,PROJ-003,Inactive,International
+3,李小明,xiaoming.li@email.com,+86-138-0013-8000,2000-01-01,北京市朝阳区建国门外大街1号,90000,Engineering,2022-06-01,PROJ-004,Active,Asia
+4,مُحَمَّد أَحْمَد,mohammed@email.com,+971-50-123-4567,1995-06-15,شارع الشيخ زايد، دبي، الإمارات العربية المتحدة,65000,Marketing,2021-09-10,PROJ-005,Active,Middle East

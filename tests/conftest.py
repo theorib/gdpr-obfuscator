@@ -25,11 +25,44 @@ def test_files():
                 "local_path": "tests/data/simple_pii_data.csv",
                 "result_local_path": "tests/data/simple_pii_data_obfuscated.csv",
                 "key": "simple_pii_data.csv",
+                "pii_fields": ["email_address"],
             },
             "edge_cases_no_rows": {
                 "local_path": "tests/data/edge_cases_no_rows.csv",
                 "result_local_path": "tests/data/edge_cases_no_rows.csv",
                 "key": "edge_cases_no_rows.csv",
+            },
+            "complex_pii_data": {
+                "local_path": "tests/data/complex_pii_data.csv",
+                "result_local_path": "tests/data/complex_pii_data_obfuscated.csv",
+                "key": "complex_pii_data.csv",
+                "pii_fields": [
+                    "name",
+                    "email_address",
+                    "phone_number",
+                    "address",
+                ],
+            },
+            "edge_cases_non_standard_chars": {
+                "local_path": "tests/data/edge_cases_non_standard_chars.csv",
+                "result_local_path": "tests/data/edge_cases_non_standard_chars_obfuscated.csv",
+                "key": "edge_cases_non_standard_chars.csv",
+                "pii_fields": [
+                    "name",
+                    "email_address",
+                    "phone_number",
+                ],
+            },
+            "edge_cases_missing_data": {
+                "local_path": "tests/data/edge_cases_missing_data.csv",
+                "result_local_path": "tests/data/edge_cases_missing_data_obfuscated.csv",
+                "key": "edge_cases_missing_data.csv",
+                "pii_fields": [
+                    "name",
+                    "email_address",
+                    "phone_number",
+                    "address",
+                ],
             },
         }
     }

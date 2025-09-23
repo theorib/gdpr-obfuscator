@@ -1,0 +1,11 @@
+id,name,email_address,phone_number,date_of_birth,address,salary,department,hire_date,project_code,status,region
+1,***,***,***,1985-03-15,***,75000,Engineering,2020-01-15,PROJ-001,Active,North
+2,***,***,***,1990-07-22,***,68000,Marketing,2019-08-10,PROJ-002,Active,North
+3,***,***,***,1988-11-30,***,82000,Engineering,2018-03-22,PROJ-001,Inactive,North
+4,***,***,***,1992-05-18,***,59000,HR,2021-06-01,PROJ-003,Active,South
+5,***,***,***,1987-09-12,***,71000,Sales,2017-11-30,PROJ-002,Active,North
+6,***,***,***,1991-01-25,***,63000,Marketing,2020-09-15,PROJ-004,Active,Central
+7,***,***,***,1989-12-03,***,77000,Engineering,2019-02-28,PROJ-001,Active,North
+8,***,***,***,1993-08-07,***,55000,Support,2022-01-10,PROJ-005,Active,North
+9,***,***,***,1986-04-14,***,84000,Engineering,2016-07-18,PROJ-001,Inactive,North
+10,***,***,***,1994-10-29,***,61000,Design,2021-03-05,PROJ-006,Active,Wales
