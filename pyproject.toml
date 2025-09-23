@@ -21,7 +21,11 @@ classifiers = [
 ]
 keywords = ["gdpr", "pii", "obfuscation", "privacy", "data-protection", "csv"]
 
-dependencies = ["polars==1.33.1"]
+dependencies = [
+    "boto3>=1.40.35",
+    "polars==1.33.1",
+    "types-boto3[essential]>=1.40.36",
+]
 
 [dependency-groups]
 dev = [
