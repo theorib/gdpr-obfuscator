@@ -64,6 +64,16 @@ def test_files():
                     "address",
                 ],
             },
+            "edge_cases_empty_file": {
+                "local_path": "tests/data/edge_cases_empty_file.csv",
+                "key": "edge_cases_empty_file.csv",
+                "pii_fields": [
+                    "name",
+                    "email_address",
+                    "phone_number",
+                    "address",
+                ],
+            },
         }
     }
 
