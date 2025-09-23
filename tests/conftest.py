@@ -6,13 +6,22 @@ import pytest
 from moto import mock_aws
 from types_boto3_s3.client import S3Client
 
-MOCK_AWS_BUCKET_NAME = "test-bucket"
-MOCK_AWS_TEST_FILES = {
-    "sample_pii_data": {
-        "path": "tests/data/sample_pii_data.csv",
-        "key": "sample_pii_data.csv",
+
+@pytest.fixture(scope="package")
+def mock_aws_bucket_name():
+    return "test-bucket"
+
+
+@pytest.fixture(scope="package")
+def test_files():
+    return {
+        "csv": {
+            "sample_pii_data": {
+                "path": "tests/data/sample_pii_data.csv",
+                "key": "sample_pii_data.csv",
+            }
+        }
     }
-}
 
 
 @pytest.fixture(scope="function")
@@ -35,9 +44,9 @@ def s3_client(aws_credentials) -> Generator[S3Client, None, None]:
 
 @pytest.fixture(scope="function")
 def s3_client_with_empty_test_bucket(
-    s3_client: S3Client, aws_credentials
+    s3_client: S3Client, aws_credentials, mock_aws_bucket_name
 ) -> Generator[S3Client, None, None]:
-    bucket_name = MOCK_AWS_BUCKET_NAME
+    bucket_name = mock_aws_bucket_name
     s3_client.create_bucket(
         Bucket=bucket_name,
         CreateBucketConfiguration={"LocationConstraint": "eu-west-2"},
@@ -47,17 +56,17 @@ def s3_client_with_empty_test_bucket(
 
 @pytest.fixture(scope="function")
 def s3_client_with_files(
-    s3_client_with_empty_test_bucket,
+    s3_client_with_empty_test_bucket, test_files, mock_aws_bucket_name
 ) -> Generator[S3Client, None, None]:
     s3_client = s3_client_with_empty_test_bucket
 
     with open(
-        MOCK_AWS_TEST_FILES["sample_pii_data"]["path"],
+        test_files["csv"]["sample_pii_data"]["path"],
         mode="rb",
     ) as sample_pii_data:
         s3_client.put_object(
-            Bucket=MOCK_AWS_BUCKET_NAME,
-            Key=MOCK_AWS_TEST_FILES["sample_pii_data"]["key"],
+            Bucket=mock_aws_bucket_name,
+            Key=test_files["csv"]["sample_pii_data"]["key"],
             Body=sample_pii_data,
         )
 
