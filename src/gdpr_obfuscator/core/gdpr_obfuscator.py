@@ -1,8 +1,10 @@
 """Main obfuscation functionality for GDPR compliance."""
 
+import io
 from typing import List, Tuple
 
 import boto3
+import polars as pl
 from botocore.exceptions import ClientError
 
 
@@ -26,8 +28,17 @@ def gdpr_obfuscator(file_to_obfuscate: str, pii_fields: List[str]) -> bytes:
     bucket, key = get_parse_s3_path(file_to_obfuscate)
 
     response = s3_client.get_object(Bucket=bucket, Key=key)
+    # pprint(response)
     file = response["Body"].read()
-    return file
+
+    df = pl.read_csv(source=file)
+    print(df)
+    df_obfuscated = df.with_columns([pl.lit("***").alias(col) for col in pii_fields])
+    print(df_obfuscated)
+
+    buffer = io.BytesIO()
+    df_obfuscated.write_csv(file=buffer)
+    return buffer.getvalue()
 
 
 def get_parse_s3_path(s3_path: str) -> Tuple[str, str]:
