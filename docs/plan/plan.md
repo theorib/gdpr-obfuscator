@@ -35,6 +35,9 @@ This file should be used as a living document for the development of this projec
 - [ ] Find a time management app
 - [x] Setup Bandit for static file-security analysis
 
+## Todo List
+- [ ] Impplement character detection and robust header matching for resulting csv files
+
 ## Testing
 
 The project will use [pytest](https://docs.pytest.org/en/stable/) for testing with [pytest-testdox](https://pypi.org/project/pytest-testdox/) and [pytest-cov](https://pypi.org/project/pytest-cov/) for test coverage. It will also be using [Moto](https://docs.getmoto.org/en/latest/docs/getting_started.html) for testing AWS interactions.
