@@ -1,41 +1,92 @@
 {
-    "notebook.defaultFormatter": "charliermarsh.ruff",
-    "notebook.codeActionsOnSave": {
-        "source.fixAll.ruff": "explicit",
-        "source.organizeImports.ruff": "explicit"
+  "notebook.defaultFormatter": "charliermarsh.ruff",
+  "notebook.codeActionsOnSave": {
+    "source.fixAll.ruff": "explicit",
+    "source.organizeImports.ruff": "explicit"
+  },
+  "ruff.nativeServer": "auto",
+  "[python]": {
+    "editor.codeActionsOnSave": {
+      "source.fixAll": "explicit",
+      "source.organizeImports": "explicit"
     },
-    "ruff.nativeServer": "auto",
-    "[python]": {
-        "editor.codeActionsOnSave": {
-            "source.fixAll": "explicit",
-            "source.organizeImports": "explicit"
-        },
-        "editor.defaultFormatter": "charliermarsh.ruff",
-    },
-    "ruff.format.preview": true,
-    "ruff.lint.preview": true,
-    "ruff.configuration": {
-        "lint": {
-            "unfixable": [
-                "F401"
-            ]
-        }
-    },
-    // make sure vs code atutomatically adds the src folder to imports
-    "python.defaultInterpreterPath": "./.venv/bin/python",
-    "python.analysis.extraPaths": [],
-    "python.analysis.autoSearchPaths": false,
-    "python.analysis.autoImportCompletions": true,
-    "python.analysis.importFormat": "absolute",
-    "python.analysis.include": [
-        "**/*.py"
-    ],
-    "python.analysis.exclude": [
-        "**/node_modules",
-        "**/__pycache__",
-        ".venv/**"
-    ],
-    "python.analysis.packageIndexDepths": [],
-    "python.analysis.stubPath": "",
-    "python.terminal.activateEnvironment": true
+    "editor.defaultFormatter": "charliermarsh.ruff"
+  },
+  "ruff.format.preview": true,
+  "ruff.lint.preview": true,
+  "ruff.configuration": {
+    "lint": {
+      "unfixable": [
+        "F401"
+      ]
+    }
+  },
+  // make sure vs code atutomatically adds the src folder to imports
+  "python.defaultInterpreterPath": "./.venv/bin/python",
+  "python.analysis.extraPaths": [],
+  "python.analysis.autoSearchPaths": false,
+  "python.analysis.autoImportCompletions": true,
+  "python.analysis.importFormat": "absolute",
+  "python.analysis.include": [
+    "**/*.py"
+  ],
+  "python.analysis.exclude": [
+    "**/node_modules",
+    "**/__pycache__",
+    ".venv/**"
+  ],
+  "python.analysis.packageIndexDepths": [],
+  "python.analysis.stubPath": "",
+  "python.terminal.activateEnvironment": true,
+  "hidefiles.configurationType": "local",
+  "hidefiles.globalConfig": {
+    "profiles": [
+      {
+        "name": "Default",
+        "detail": "",
+        "description": "Test",
+        "hidden": [
+          ".vscode/",
+          ".claude/",
+          ".pytest_cache/",
+          ".ruff_cache/",
+          ".venv/",
+          "infrastructure/",
+          "src/gdpr_obfuscator/__pycache__/",
+          "src/gdpr_obfuscator/core/__pycache__/",
+          "tests/__pycache__/",
+          "vendored/",
+          ".gitignore",
+          ".python-version"
+        ]
+      },
+      {
+        "name": "Strict",
+        "detail": "Hide everything not immediately required",
+        "hidden": [
+          "$Default"
+        ]
+      }
+    ]
+  },
+  "files.exclude": {
+    "**/.git": true,
+    "**/.svn": true,
+    "**/.hg": true,
+    "**/CVS": true,
+    "**/.DS_Store": true,
+    ".vscode/": true,
+    ".claude/": true,
+    ".pytest_cache/": true,
+    ".ruff_cache/": true,
+    ".venv/": true,
+    "infrastructure/": true,
+    "src/gdpr_obfuscator/__pycache__/": true,
+    "src/gdpr_obfuscator/core/__pycache__/": true,
+    "tests/__pycache__/": true,
+    "vendored/": true,
+    ".gitignore": true,
+    ".python-version": true
+  },
+  "hidefiles.selectedProfile": "Default"
 }
