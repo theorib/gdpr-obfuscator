@@ -17,11 +17,24 @@ def test_files():
     return {
         "csv": {
             "sample_pii_data": {
-                "path": "tests/data/sample_pii_data.csv",
+                "local_path": "tests/data/sample_pii_data.csv",
                 "key": "sample_pii_data.csv",
-            }
+            },
+            "edge_cases_no_rows": {
+                "local_path": "tests/data/edge_cases_no_rows.csv",
+                "key": "edge_cases_no_rows.csv",
+            },
         }
     }
+
+
+@pytest.fixture(scope="class")
+def get_test_file():
+    def get_test_file_inner_factory(local_path: str):
+        with open(local_path, mode="rb") as file:
+            return file.read()
+
+    yield get_test_file_inner_factory
 
 
 @pytest.fixture(scope="function")
@@ -60,14 +73,12 @@ def s3_client_with_files(
 ) -> Generator[S3Client, None, None]:
     s3_client = s3_client_with_empty_test_bucket
 
-    with open(
-        test_files["csv"]["sample_pii_data"]["path"],
-        mode="rb",
-    ) as sample_pii_data:
-        s3_client.put_object(
-            Bucket=mock_aws_bucket_name,
-            Key=test_files["csv"]["sample_pii_data"]["key"],
-            Body=sample_pii_data,
-        )
+    for file in test_files["csv"].values():
+        with open(file["local_path"], mode="rb") as f:
+            s3_client.put_object(
+                Bucket=mock_aws_bucket_name,
+                Key=file["key"],
+                Body=f,
+            )
 
     yield s3_client
