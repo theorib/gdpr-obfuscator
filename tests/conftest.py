@@ -13,15 +13,22 @@ def mock_aws_bucket_name():
 
 
 @pytest.fixture(scope="package")
+def masking_string():
+    return "***"
+
+
+@pytest.fixture(scope="package")
 def test_files():
     return {
         "csv": {
-            "sample_pii_data": {
-                "local_path": "tests/data/sample_pii_data.csv",
-                "key": "sample_pii_data.csv",
+            "simple_pii_data": {
+                "local_path": "tests/data/simple_pii_data.csv",
+                "result_local_path": "tests/data/simple_pii_data_obfuscated.csv",
+                "key": "simple_pii_data.csv",
             },
             "edge_cases_no_rows": {
                 "local_path": "tests/data/edge_cases_no_rows.csv",
+                "result_local_path": "tests/data/edge_cases_no_rows.csv",
                 "key": "edge_cases_no_rows.csv",
             },
         }

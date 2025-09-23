@@ -1,0 +1,4 @@
+id,email_address,salary,department,hire_date,status,region
+1,***,75000,Engineering,2020-01-15,Active,North
+2,***,68000,Marketing,2019-08-10,Active,North
+3,***,82000,Engineering,2018-03-22,Inactive,North
