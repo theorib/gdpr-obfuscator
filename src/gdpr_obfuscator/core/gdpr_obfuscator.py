@@ -1,6 +1,7 @@
 """Main obfuscation functionality for GDPR compliance."""
 
 import io
+from pprint import pprint
 from typing import List, Tuple
 
 import boto3
@@ -31,14 +32,23 @@ def gdpr_obfuscator(file_to_obfuscate: str, pii_fields: List[str]) -> bytes:
     # pprint(response)
     file = response["Body"].read()
 
+    # Check if original file has trailing newline
+    has_trailing_newline = file.endswith(b"\n")
+
     df = pl.read_csv(source=file)
-    print(df)
+    # print(df)
     df_obfuscated = df.with_columns([pl.lit("***").alias(col) for col in pii_fields])
-    print(df_obfuscated)
+    # print(df_obfuscated)
 
     buffer = io.BytesIO()
     df_obfuscated.write_csv(file=buffer)
-    return buffer.getvalue()
+    result = buffer.getvalue()
+
+    # Match original file's trailing newline behavior
+    if not has_trailing_newline and result.endswith(b"\n"):
+        result = result[:-1]
+
+    return result
 
 
 def get_parse_s3_path(s3_path: str) -> Tuple[str, str]:
