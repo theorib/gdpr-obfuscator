@@ -36,7 +36,8 @@ This file should be used as a living document for the development of this projec
 - [x] Setup Bandit for static file-security analysis
 
 ## Todo List
-- [ ] Impplement character detection and robust header matching for resulting csv files
+- [ ] Impplement character encoding matching for resulting csv files
+- [ ] Implement robust header matching for resulting csv files
 
 ## Testing
 
