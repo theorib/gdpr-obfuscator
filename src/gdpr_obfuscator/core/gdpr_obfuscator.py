@@ -25,28 +25,34 @@ def gdpr_obfuscator(file_to_obfuscate: str, pii_fields: List[str]) -> bytes:
         FileNotFoundError: If the specified file doesn't exist (invalid s3 path)
         KeyError: If specified PII fields are not found in the CSV file
     """
-    s3_client = boto3.client("s3")
-    bucket, key = get_parse_s3_path(file_to_obfuscate)
+    try:
+        s3_client = boto3.client("s3")
+        bucket, key = get_parse_s3_path(file_to_obfuscate)
 
-    response = s3_client.get_object(Bucket=bucket, Key=key)
-    # pprint(response)
-    file = response["Body"].read()
+        response = s3_client.get_object(Bucket=bucket, Key=key)
+        # pprint(response)
+        file = response["Body"].read()
 
-    has_trailing_newline = file.endswith(b"\n")
+        has_trailing_newline = file.endswith(b"\n")
 
-    df = pl.read_csv(source=file)
-    # print(df)
-    df_obfuscated = df.with_columns([pl.lit("***").alias(col) for col in pii_fields])
-    # print(df_obfuscated)
+        df = pl.read_csv(source=file)
+        df_obfuscated = df.with_columns([
+            pl.lit("***").alias(col) for col in pii_fields
+        ])
+        print(df)
+        # print(df_obfuscated)
 
-    buffer = io.BytesIO()
-    df_obfuscated.write_csv(file=buffer)
-    result = buffer.getvalue()
+        buffer = io.BytesIO()
+        df_obfuscated.write_csv(file=buffer)
+        result = buffer.getvalue()
 
-    if not has_trailing_newline and result.endswith(b"\n"):
-        result = result[:-1]
+        if not has_trailing_newline and result.endswith(b"\n"):
+            result = result[:-1]
 
-    return result
+        return result
+
+    except pl.exceptions.NoDataError:
+        raise ValueError("empty data from bytes")
 
 
 def get_parse_s3_path(s3_path: str) -> Tuple[str, str]:

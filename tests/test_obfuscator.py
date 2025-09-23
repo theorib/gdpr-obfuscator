@@ -151,10 +151,21 @@ class TestGDPRObfuscator:
         result = gdpr_obfuscator(file_to_obfuscate, pii_fields)
         assert result == expected
 
-    @pytest.mark.skip
+    # @pytest.mark.skip
     @pytest.mark.it("check that an empty file raises a ValueError exception")
-    def test_empty_file_exception(self):
-        pass
+    def test_empty_file_exception(
+        self,
+        s3_client_with_files,
+        test_files,
+        get_test_file,
+        mock_aws_bucket_name,
+    ):
+        file_to_obfuscate = f"s3://{mock_aws_bucket_name}/{test_files['csv']['edge_cases_empty_file']['key']}"
+        pii_fields = test_files["csv"]["edge_cases_empty_file"]["pii_fields"]
+
+        with pytest.raises(ValueError) as error:
+            gdpr_obfuscator(file_to_obfuscate, pii_fields)
+        assert str(error.value) == "empty data from bytes"
 
     @pytest.mark.skip
     @pytest.mark.it("check that an invalid s3 key raises a FileNotFoundError exception")
