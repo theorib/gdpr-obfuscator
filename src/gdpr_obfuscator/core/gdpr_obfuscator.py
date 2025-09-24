@@ -36,10 +36,15 @@ def gdpr_obfuscator(file_to_obfuscate: str, pii_fields: List[str]) -> bytes:
         has_trailing_newline = file.endswith(b"\n")
 
         df = pl.read_csv(source=file)
+
+        missing_columns = [col for col in pii_fields if col not in df.columns]
+        if missing_columns:
+            raise KeyError(f"PII fields not found in CSV: {missing_columns}")
+
         df_obfuscated = df.with_columns([
             pl.lit("***").alias(col) for col in pii_fields
         ])
-        print(df)
+        # print(df)
         # print(df_obfuscated)
 
         buffer = io.BytesIO()
@@ -53,6 +58,18 @@ def gdpr_obfuscator(file_to_obfuscate: str, pii_fields: List[str]) -> bytes:
 
     except pl.exceptions.NoDataError:
         raise ValueError("empty data from bytes")
+    except ClientError as err:
+        error_map = {
+            "NoSuchKey": FileNotFoundError("The specified key does not exist."),
+            "NoSuchBucket": FileNotFoundError("The specified bucket does not exist."),
+        }
+        # print(err.response["Error"]["Code"])
+        error_code = err.response.get("Error", {}).get("Code")
+        if error_code in error_map:
+            # print(err)
+            raise error_map[error_code]
+        else:
+            raise err
 
 
 def get_parse_s3_path(s3_path: str) -> Tuple[str, str]:
