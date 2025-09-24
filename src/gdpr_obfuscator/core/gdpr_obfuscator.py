@@ -24,13 +24,26 @@ def gdpr_obfuscator(file_to_obfuscate: str, pii_fields: List[str]) -> bytes:
         ValueError: If an empty file_to_obfuscate is passed
         FileNotFoundError: If the specified file doesn't exist (invalid s3 path)
         KeyError: If specified PII fields are not found in the CSV file
+        RuntimeError: If an unexpected S3 response error occurs
     """
     try:
         s3_client = boto3.client("s3")
-        bucket, key = get_parse_s3_path(file_to_obfuscate)
+        bucket, key = _get_parse_s3_path(file_to_obfuscate)
 
         response = s3_client.get_object(Bucket=bucket, Key=key)
         # pprint(response)
+
+        if response.get("ResponseMetadata").get("HTTPStatusCode") != 200:
+            response_error_code = (
+                response.get("ResponseMetadata").get("Error", {}).get("Code")
+            )
+            response_error_message = (
+                response.get("ResponseMetadata").get("Error", {}).get("Message")
+            )
+            raise RuntimeError(
+                f"Unexpected S3 response error. Error Code: {response_error_code}, Error Message: {response_error_message}"
+            )
+
         file = response["Body"].read()
 
         has_trailing_newline = file.endswith(b"\n")
@@ -72,7 +85,7 @@ def gdpr_obfuscator(file_to_obfuscate: str, pii_fields: List[str]) -> bytes:
             raise err
 
 
-def get_parse_s3_path(s3_path: str) -> Tuple[str, str]:
+def _get_parse_s3_path(s3_path: str) -> Tuple[str, str]:
     prefix = "s3://"
     sanitized_s3_path = s3_path.strip()
     if not s3_path:

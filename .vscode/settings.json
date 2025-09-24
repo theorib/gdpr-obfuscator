@@ -74,19 +74,7 @@
     "**/.svn": true,
     "**/.hg": true,
     "**/CVS": true,
-    "**/.DS_Store": true,
-    ".vscode/": true,
-    ".claude/": true,
-    ".pytest_cache/": true,
-    ".ruff_cache/": true,
-    ".venv/": true,
-    "infrastructure/": true,
-    "src/gdpr_obfuscator/__pycache__/": true,
-    "src/gdpr_obfuscator/core/__pycache__/": true,
-    "tests/__pycache__/": true,
-    "vendored/": true,
-    ".gitignore": true,
-    ".python-version": true
+    "**/.DS_Store": true
   },
-  "hidefiles.selectedProfile": "Default"
+  "hidefiles.selectedProfile": "Show All Files"
 }
