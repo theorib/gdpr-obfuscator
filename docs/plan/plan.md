@@ -11,7 +11,7 @@ This file should be used as a living document for the development of this projec
 
 - [ ] Define Tech Stack
   - [ ] Use [Pydantic](https://docs.pydantic.dev/latest/) for Data Validation?
-  - [ ] Use [Polars](https://pola.rs) to handle file manipulation?
+  - [x] Use [Polars](https://pola.rs) to handle file manipulation?
   - [ ] which Python library to use to make creating cli applications easier?
   - [x] Use [bandit](https://bandit.readthedocs.io/en/latest/index.html) or [Semgrep](https://semgrep.dev) for static file-security analysis?
 - [ ] Decide how to test and present the project specially AWS features?
@@ -32,7 +32,7 @@ This file should be used as a living document for the development of this projec
 - [x] Setup [Boto3](https://boto3.amazonaws.com/v1/documentation/api/latest/index.html)
   - [x] Install and setup [mypy_boto3_builder](https://youtype.github.io/mypy_boto3_builder/)
   - [x] Install and set up [Type annotations for boto3](https://youtype.github.io/types_boto3_docs/)
-- [ ] Find a time management app
+- [x] Find a time management app ([clockify](http://clockify.me))
 - [x] Setup Bandit for static file-security analysis
 
 ## Todo List
