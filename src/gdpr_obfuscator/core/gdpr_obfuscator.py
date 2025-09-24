@@ -1,7 +1,6 @@
 """Main obfuscation functionality for GDPR compliance."""
 
 import io
-from pprint import pprint
 from typing import List, Tuple
 
 import boto3
@@ -54,9 +53,9 @@ def gdpr_obfuscator(file_to_obfuscate: str, pii_fields: List[str]) -> bytes:
         if missing_columns:
             raise KeyError(f"PII fields not found in CSV: {missing_columns}")
 
-        df_obfuscated = df.with_columns([
-            pl.lit("***").alias(col) for col in pii_fields
-        ])
+        df_obfuscated = df.with_columns(
+            [pl.lit("***").alias(col) for col in pii_fields]
+        )
         # print(df)
         # print(df_obfuscated)
 
