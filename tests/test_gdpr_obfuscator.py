@@ -4,7 +4,7 @@ import pytest
 from botocore.exceptions import ConnectionError
 from moto import mock_aws
 
-from gdpr_obfuscator import gdpr_obfuscator
+from src.gdpr_obfuscator.core.gdpr_obfuscator import gdpr_obfuscator
 from src.gdpr_obfuscator.core.gdpr_obfuscator import _get_parse_s3_path
 
 
