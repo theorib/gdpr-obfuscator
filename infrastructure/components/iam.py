@@ -1,9 +1,10 @@
 """IAM roles and policies for GDPR obfuscation"""
 
 import pulumi_aws as aws
+from pulumi import Output
 
 
-def create_lambda_role(account_id, aws_region, lambda_name):
+def create_lambda_role(account_id: str, aws_region: str, lambda_name: str):
     """
     Create a Lambda role with the necessary policies for GDPR obfuscation
 
@@ -51,12 +52,6 @@ def create_lambda_role(account_id, aws_region, lambda_name):
         statements=[
             {
                 "effect": "Allow",
-                "principals": [
-                    {
-                        "type": "Service",
-                        "identifiers": ["lambda.amazonaws.com"],
-                    }
-                ],
                 "actions": [
                     "logs:CreateLogGroup",
                     "logs:CreateLogStream",
@@ -87,11 +82,14 @@ def create_lambda_role(account_id, aws_region, lambda_name):
     }
 
 
-def create_lambda_s3_policies(lambda_role, bucket_name, bucket_arn, lambda_name):
+def create_lambda_s3_policies(
+    lambda_role_name: str, bucket_name: str, bucket_arn: str, lambda_name: str
+):
     """
     Create S3 access policies for Lambda
 
     :param lambda_role: Lambda role
+    :param bucket_name: S3 bucket name (Output)
     :param bucket_arn: S3 bucket ARN
     :param lambda_name: Name of the Lambda function
     :return: Lambda S3 policy and Lambda S3 policy attachment
@@ -108,12 +106,12 @@ def create_lambda_s3_policies(lambda_role, bucket_name, bucket_arn, lambda_name)
                     "s3:ListBucket",
                     "s3:DeleteObject",
                 ],
-                "resources": [f"{bucket_arn}/*"],
+                "resources": [bucket_arn],
             }
         ],
     )
 
-    # Create
+    # Create policy with static name
     lambda_s3_policy = aws.iam.Policy(
         f"{lambda_name}-{bucket_name}-lambda-s3-policy",
         policy=lambda_s3_policy_doc.json,
@@ -122,7 +120,7 @@ def create_lambda_s3_policies(lambda_role, bucket_name, bucket_arn, lambda_name)
     # Attach
     lambda_s3_policy_attachment = aws.iam.RolePolicyAttachment(
         f"{lambda_name}-{bucket_name}-lambda-s3-policy-attachment",
-        role=lambda_role.name,
+        role=lambda_role_name,
         policy_arn=lambda_s3_policy.arn,
     )
 
