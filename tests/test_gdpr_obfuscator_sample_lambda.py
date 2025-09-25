@@ -1,6 +1,6 @@
 import pytest
 
-from src.gdpr_obfuscateor_sample_lambda.gdpr_obfuscateor_sample_lambda import (
+from src.gdpr_obfuscator_sample_lambda.gdpr_obfuscator_sample_lambda import (
     lambda_handler,
 )
 
