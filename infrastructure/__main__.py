@@ -14,7 +14,7 @@ project_root = os.path.abspath(os.path.dirname(root))
 aws_region = aws.get_region().id
 account_id = aws.get_caller_identity().account_id
 
-test_lambda_name = "gdpr-obfuscator-test-lambda"
+test_lambda_name = "gdpr_obfuscator_sample_lambda"
 
 lambda_role = create_lambda_role(
     account_id=account_id, aws_region=aws_region, lambda_name=test_lambda_name
@@ -40,14 +40,14 @@ lambda_layer_bucket_s3_policies = create_lambda_s3_policies(
 )
 
 
-# lambda_resources = create_lambda_function(
-#     lambda_role["lambda_role"].arn,
-#     s3_resources["test_data_bucket"].id,
-#     s3_resources["lambda_layer_bucket"].id,
-# )
+lambda_resources = create_lambda_function(
+    lambda_role_arn=lambda_role["lambda_role"].arn,
+    lambda_name=test_lambda_name,
+    project_root=project_root,
+)
 
 
-# pulumi.export("bucket_name", s3_resources["test_data_bucket"].id)
-# pulumi.export("bucket_arn", s3_resources["test_data_bucket"].arn)
-# pulumi.export("complex_pii_data_key", s3_resources["test_data"].key)
-# pulumi.export("lambda_role_arn", lambda_role["lambda_role"].arn)
+pulumi.export("bucket_name", s3_resources["test_data_bucket"].id)
+pulumi.export("bucket_arn", s3_resources["test_data_bucket"].arn)
+pulumi.export("complex_pii_data_key", test_data["complex_pii_data"].key)
+pulumi.export("lambda_role_arn", lambda_role["lambda_role"].arn)
