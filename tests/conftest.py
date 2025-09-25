@@ -36,6 +36,7 @@ def test_files():
                 "local_path": "tests/data/complex_pii_data.csv",
                 "result_local_path": "tests/data/complex_pii_data_obfuscated.csv",
                 "key": "complex_pii_data.csv",
+                "result_key": "complex_pii_data_obfuscated.csv",
                 "pii_fields": [
                     "name",
                     "email_address",
