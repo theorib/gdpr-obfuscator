@@ -46,6 +46,18 @@ def test_files():
                     "address",
                 ],
             },
+            "large_pii_data": {
+                "local_path": "tests/data/large_pii_data.csv",
+                "result_local_path": "tests/data/large_pii_data_obfuscated.csv",
+                "key": "large_pii_data.csv",
+                "result_key": "large_pii_data_obfuscated.csv",
+                "pii_fields": [
+                    "name",
+                    "email_address",
+                    "phone_number",
+                    "address",
+                ],
+            },
             "edge_cases_non_standard_chars": {
                 "local_path": "tests/data/edge_cases_non_standard_chars.csv",
                 "result_local_path": "tests/data/edge_cases_non_standard_chars_obfuscated.csv",
