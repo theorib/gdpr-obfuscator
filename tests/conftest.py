@@ -99,7 +99,7 @@ def test_files():
 
 @pytest.fixture(scope="class")
 def get_test_file():
-    def get_test_file_inner_factory(local_path: str):
+    def get_test_file_inner_factory(local_path: str) -> bytes:
         with open(local_path, mode="rb") as file:
             return file.read()
 
