@@ -336,7 +336,7 @@ class TestGetParseS3Pathget_parse_s3_path:
 
     # @pytest.mark.skip
     @pytest.mark.it(
-        "check that a key with more than one file extensions returns the correct key"
+        "check that a key with more than one file extension returns the correct key"
     )
     def test_key_with_multiple_extensions(self):
         path = "s3://bucket_name/file_key.csv.gz"
