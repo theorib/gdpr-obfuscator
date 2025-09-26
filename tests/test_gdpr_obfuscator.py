@@ -4,9 +4,29 @@ import pytest
 from botocore.exceptions import ConnectionError
 from moto import mock_aws
 
-from src.gdpr_obfuscator.core.gdpr_obfuscator import _parse_s3_path, gdpr_obfuscator
+from src.gdpr_obfuscator.core.gdpr_obfuscator import (
+    _get_file_from_s3,
+    _parse_s3_path,
+    gdpr_obfuscator,
+)
+
+# !TODO Other tests todo:
+
+# General socket/connection errors
+# ConnectionError
+# ConnectionClosedError
+# ReadTimeoutError
+# EndpointConnectionError
+
+# Service-side throttling/limit errors and exceptions
+# Throttling
+# ThrottlingException
+# ThrottledException
+# RequestThrottledException
+# ProvisionedThroughputExceededException
 
 
+# test for partial reads with line count
 @pytest.mark.describe("Test the gdpr_obfuscator function")
 @mock_aws
 class TestGDPRObfuscator:
@@ -165,41 +185,6 @@ class TestGDPRObfuscator:
         with pytest.raises(ValueError, match=r"empty data from bytes"):
             gdpr_obfuscator(file_to_obfuscate, pii_fields)
 
-    # @pytest.mark.skip
-    @pytest.mark.it("check that an invalid s3 key raises a FileNotFoundError exception")
-    def test_invalid_s3_key_exception(
-        self,
-        s3_client_with_files,
-        test_files,
-        get_test_file,
-        mock_aws_bucket_name,
-    ):
-        file_to_obfuscate = f"s3://{mock_aws_bucket_name}/some_invalid_key.csv"
-        pii_fields = ["name"]
-
-        with pytest.raises(
-            FileNotFoundError, match=r"The specified key does not exist."
-        ):
-            gdpr_obfuscator(file_to_obfuscate, pii_fields)
-
-    # @pytest.mark.skip
-    @pytest.mark.it("check that it raises an error if an invalid bucket name is passed")
-    def test_invalid_bucket_name_exception(
-        self,
-        s3_client_with_files,
-        test_files,
-        get_test_file,
-        mock_aws_bucket_name,
-    ):
-        file_to_obfuscate = f"s3://some_invalid_bucket_name/{test_files['csv']['edge_cases_empty_file']['key']}"
-        pii_fields = test_files["csv"]["edge_cases_empty_file"]["pii_fields"]
-
-        with pytest.raises(
-            FileNotFoundError, match=r"The specified bucket does not exist."
-        ):
-            gdpr_obfuscator(file_to_obfuscate, pii_fields)
-
-    # @pytest.mark.skip
     @pytest.mark.it(
         "check that the file_to_obfuscate is formatted correctly, starting with s3://, otherwise raise a FileNotFoundError"
     )
@@ -243,37 +228,75 @@ class TestGDPRObfuscator:
         ):
             gdpr_obfuscator(file_to_obfuscate, pii_fields)
 
+
+@pytest.mark.describe("Test _get_file_from_s3")
+class TestGetFileFromS3:
     # @pytest.mark.skip
-    @pytest.mark.it(
-        "check that it raises an exception if there is a problem with the s3 connnection"
-    )
-    def test_s3_connection_error(
+    @pytest.mark.it("check that it returns the expected bytes object")
+    def test_get_file_from_s3_returns_bytes_object(
         self,
         s3_client_with_files,
-        test_files,
+        mock_aws_bucket_name,
         get_test_file,
+        test_files,
+    ):
+        key = test_files["csv"]["complex_pii_data"]["key"]
+        expected = get_test_file(test_files["csv"]["complex_pii_data"]["local_path"])
+
+        result = _get_file_from_s3(mock_aws_bucket_name, key, s3_client_with_files)
+        assert result == expected
+        assert isinstance(result, bytes)
+
+    # @pytest.mark.skip
+    @pytest.mark.it("check that an invalid s3 key raises a FileNotFoundError exception")
+    def test_get_file_from_s3_invalid_key(
+        self,
+        s3_client_with_files,
         mock_aws_bucket_name,
     ):
-        with patch("boto3.client") as mock_boto3_client:
-            mock_s3 = mock_boto3_client.return_value
-            mock_s3.get_object.side_effect = ConnectionError(error=Exception())
+        key = "invalid_key"
 
-            file_to_obfuscate = f"s3://{mock_aws_bucket_name}/{test_files['csv']['edge_cases_no_rows']['key']}"
-            pii_fields = ["name", "email_address"]
-
-            with pytest.raises(ConnectionError):
-                gdpr_obfuscator(file_to_obfuscate, pii_fields)
+        with pytest.raises(
+            FileNotFoundError, match=r"The specified key does not exist."
+        ):
+            _get_file_from_s3(mock_aws_bucket_name, key, s3_client_with_files)
 
     # @pytest.mark.skip
     @pytest.mark.it(
-        "check that unexpected S3 response status codes raises a RuntimeError"
+        "check that it raises a FileNotFoundError exception if an invalid bucket name is passed "
     )
-    def test_unexpected_s3_response_status_code(
+    def test_get_file_from_s3_invalid_bucket_name(
         self,
         s3_client_with_files,
-        test_files,
     ):
-        mock_response = {
+        key = "test-file.csv"
+        bucket_name = "invalid-bucket-name"
+        with pytest.raises(
+            FileNotFoundError, match=r"The specified bucket does not exist."
+        ):
+            _get_file_from_s3(bucket_name, key, s3_client_with_files)
+
+    # @pytest.mark.skip
+    @pytest.mark.it(
+        "check that it raises a Connection Error if there is a problem with the s3 connection"
+    )
+    def test_get_file_from_s3_connection_error(
+        self,
+        mock_aws_bucket_name,
+    ):
+        s3_client = MagicMock()
+        s3_client.get_object.side_effect = ConnectionError(error=Exception())
+        key = "test-file.csv"
+        with pytest.raises(ConnectionError):
+            _get_file_from_s3(mock_aws_bucket_name, key, s3_client)
+
+    # @pytest.mark.skip
+    @pytest.mark.it(
+        "check that an unexpected S3 response status codes raises a RuntimeError"
+    )
+    def test_get_file_from_s3_unexpected_status_code(self, mock_aws_bucket_name):
+        s3_client = MagicMock()
+        s3_client.get_object.return_value = {
             "ResponseMetadata": {
                 "HTTPStatusCode": 500,
                 "Error": {
@@ -283,33 +306,10 @@ class TestGDPRObfuscator:
             },
             "Body": MagicMock(),
         }
+        key = "test-file.csv"
 
-        with patch("boto3.client") as mock_boto3:
-            mock_s3_client = MagicMock()
-            mock_s3_client.get_object.return_value = mock_response
-            mock_boto3.return_value = mock_s3_client
-
-            with pytest.raises(RuntimeError, match="Unexpected S3 response error"):
-                gdpr_obfuscator("s3://test-bucket/test-file.csv", ["name"])
-
-
-# !TODO Other tests todo:
-
-# General socket/connection errors
-# ConnectionError
-# ConnectionClosedError
-# ReadTimeoutError
-# EndpointConnectionError
-
-# Service-side throttling/limit errors and exceptions
-# Throttling
-# ThrottlingException
-# ThrottledException
-# RequestThrottledException
-# ProvisionedThroughputExceededException
-
-
-# test for partial reads with line count
+        with pytest.raises(RuntimeError, match="Unexpected S3 response error"):
+            _get_file_from_s3(mock_aws_bucket_name, key, s3_client)
 
 
 @pytest.mark.describe("Test the get_parse_s3_path function")
