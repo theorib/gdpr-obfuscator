@@ -3,7 +3,7 @@ Reference Links:
 [AWS Lambda with Polars](https://www.rhosignal.com/posts/polars-aws-lambda/)
 [JSON to Parquet Compaction in AWS Lambda with Polars](https://freedium.cfd/https://medium.com/@sendoamoronta/json-to-parquet-compaction-in-aws-lambda-with-polars-5398c7e07319)
 [How to build a Python package with uv and install it locally](https://www.sarahglasmacher.com/how-to-build-python-package-uv/)
-
+[Profiling in Python: How to Find Performance Bottlenecks](https://realpython.com/python-profiling/#time-measure-the-execution-time)
 Project Dependencies and library Docs:
 
 - [uv](https://docs.astral.sh/uv/)
