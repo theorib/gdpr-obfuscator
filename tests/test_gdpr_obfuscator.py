@@ -325,6 +325,26 @@ class TestGetParseS3Pathget_parse_s3_path:
         assert key == "file_key.csv"
 
     # @pytest.mark.skip
+    @pytest.mark.it(
+        "check that a path with a key with multiple nested directories returns the correct key"
+    )
+    def test_get_parse_s3_path_with_nested_directories(self):
+        path = "s3://bucket_name/dir1/dir2/dir3/file_key.csv"
+        bucket, key = _parse_s3_path(path)
+        assert bucket == "bucket_name"
+        assert key == "dir1/dir2/dir3/file_key.csv"
+
+    # @pytest.mark.skip
+    @pytest.mark.it(
+        "check that a key with more than one file extensions returns the correct key"
+    )
+    def test_key_with_multiple_extensions(self):
+        path = "s3://bucket_name/file_key.csv.gz"
+        bucket, key = _parse_s3_path(path)
+        assert bucket == "bucket_name"
+        assert key == "file_key.csv.gz"
+
+    # @pytest.mark.skip
     @pytest.mark.it("check that an invalid S3 path raises a FileNotFoundError exeption")
     def test_invalid_s3_path_exception(self):
         with pytest.raises(FileNotFoundError) as error:

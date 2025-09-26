@@ -96,6 +96,6 @@ def _parse_s3_path(s3_path: str) -> Tuple[str, str]:
     path = Path(sanitized_s3_path)
 
     bucket_name = path.parts[1]
-    key = path.name
+    key = "/".join(path.parts[2:])
 
     return bucket_name, key
