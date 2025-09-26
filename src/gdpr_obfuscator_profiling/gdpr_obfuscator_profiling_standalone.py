@@ -11,16 +11,17 @@ from unittest.mock import MagicMock, patch
 from src.gdpr_obfuscator.core.gdpr_obfuscator import gdpr_obfuscator
 
 
-def main():
+def main(
+    file_to_obfuscate="s3://test-bucket/large_pii_data.csv",
+    pii_fields=["name", "email_address", "phone_number", "address"],
+    profiling_data_output_path="docs/profiling/standalone_profiling.prof",
+    report_output_path="docs/profiling/standalone_profiling.md",
+):
     """Profile GDPR obfuscator with lightweight aws s3 mocking."""
 
     # Test configuration
     test_file_path = "tests/data/large_pii_data.csv"
     expected_file_path = "tests/data/large_pii_data_obfuscated.csv"
-    file_to_obfuscate = "s3://test-bucket/large_pii_data.csv"
-    pii_fields = ["name", "email_address", "phone_number", "address"]
-    profiling_data_output_path = "docs/profiling/standalone_profiling.prof"
-    report_output_path = "docs/profiling/standalone_profiling.md"
 
     # Read test data
     with open(test_file_path, "rb") as f:
