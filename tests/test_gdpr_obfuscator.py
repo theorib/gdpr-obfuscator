@@ -4,7 +4,7 @@ import pytest
 from botocore.exceptions import ConnectionError
 from moto import mock_aws
 
-from src.gdpr_obfuscator.core.gdpr_obfuscator import _get_parse_s3_path, gdpr_obfuscator
+from src.gdpr_obfuscator.core.gdpr_obfuscator import _parse_s3_path, gdpr_obfuscator
 
 
 @pytest.mark.describe("Test the gdpr_obfuscator function")
@@ -320,7 +320,7 @@ class TestGetParseS3Pathget_parse_s3_path:
     )
     def test_get_parse_s3_path(self):
         path = "s3://bucket_name/file_key.csv"
-        bucket, key = _get_parse_s3_path(path)
+        bucket, key = _parse_s3_path(path)
         assert bucket == "bucket_name"
         assert key == "file_key.csv"
 
@@ -328,7 +328,7 @@ class TestGetParseS3Pathget_parse_s3_path:
     @pytest.mark.it("check that an invalid S3 path raises a FileNotFoundError exeption")
     def test_invalid_s3_path_exception(self):
         with pytest.raises(FileNotFoundError) as error:
-            _get_parse_s3_path("bucket_name/file_key.csv")
+            _parse_s3_path("bucket_name/file_key.csv")
         assert (
             str(error.value) == 'Invalid S3 path: Missing or malformed "s3://" prefix'
         )
@@ -339,5 +339,5 @@ class TestGetParseS3Pathget_parse_s3_path:
     )
     def test_empty_path_exception(self):
         with pytest.raises(FileNotFoundError) as error:
-            _get_parse_s3_path("")
+            _parse_s3_path("")
         assert str(error.value) == "Invalid S3 path: Empty path string"
