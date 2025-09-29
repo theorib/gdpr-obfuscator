@@ -79,8 +79,8 @@ setup: sync checks ## Runs all checks and instalation scripts to get your projec
 STACK_NAME := dev
 BUCKET_NAME = $(shell cd infrastructure && pulumi stack output bucket_name --stack $(STACK_NAME))
 LAMBDA_FUNCTION_NAME = $(shell cd infrastructure && pulumi stack output lambda_function_name --stack $(STACK_NAME))
-COMPLEX_PII_DATA_KEY = $(shell cd infrastructure && pulumi stack output complex_pii_data_key --stack $(STACK_NAME))
-LARGE_PII_DATA_KEY = $(shell cd infrastructure && pulumi stack output large_pii_data_key --stack $(STACK_NAME))
+PII_DATA_KEY_COMPLEX = $(shell cd infrastructure && pulumi stack output pii_data_key_complex --stack $(STACK_NAME))
+PII_DATA_KEY_LARGE = $(shell cd infrastructure && pulumi stack output pii_data_key_large --stack $(STACK_NAME))
 PII_FIELDS=["name","email_address","phone_number","address"]
 
 .PHONY: sample-infrastructure-setup
@@ -125,28 +125,32 @@ sample-infrastructure-destroy: sample-infrastructure-clean-obfuscated-files ## D
 	@cd infrastructure && pulumi destroy --stack $(STACK_NAME) --yes
 	@echo "✅ Sample infrastructure destroyed"
 
-.PHONY: sample-infrastructure-test
-sample-infrastructure-test: sample-infrastructure-clean-obfuscated-files ## Test the Lambda function with the complex PII data set
+.PHONY: sample-infrastructure-run-test
+sample-infrastructure-run-test: sample-infrastructure-clean-obfuscated-files ## Test the Lambda function with the complex PII data set
 	@echo "🧪 Testing Lambda function: $(LAMBDA_FUNCTION_NAME)"
 	@echo "🪣 Using bucket: $(BUCKET_NAME)"
-	@echo "📄 Using complex PII data key: $(COMPLEX_PII_DATA_KEY)"
+	@echo "📄 Using complex PII data key: $(PII_DATA_KEY_COMPLEX)"
 	aws lambda invoke \
 		--function-name $(LAMBDA_FUNCTION_NAME) \
-		--payload '{"file_to_obfuscate":"s3://$(BUCKET_NAME)/$(COMPLEX_PII_DATA_KEY)","pii_fields":$(PII_FIELDS),"destination_bucket":"$(BUCKET_NAME)"}' \
+		--payload '{"file_to_obfuscate":"s3://$(BUCKET_NAME)/$(PII_DATA_KEY_COMPLEX)","pii_fields":$(PII_FIELDS),"destination_bucket":"$(BUCKET_NAME)"}' \
 		--cli-binary-format raw-in-base64-out \
 		response.json
 	@cat response.json | jq .
 
-.PHONY: sample-infrastructure-test-large
-sample-infrastructure-test-large: sample-infrastructure-clean-obfuscated-files ## Test the Lambda function with the large PII data set
+.PHONY: sample-infrastructure-run-test-large
+sample-infrastructure-run-test-large: sample-infrastructure-clean-obfuscated-files ## Test the Lambda function with the large PII data set
 	@echo "🧪 Testing Lambda function: $(LAMBDA_FUNCTION_NAME)"
 	@echo "🪣 Using bucket: $(BUCKET_NAME)"
-	@echo "📄 Using large PII data key: $(LARGE_PII_DATA_KEY)"
+	@echo "📄 Using large PII data key: $(PII_DATA_KEY_LARGE)"
 	aws lambda invoke \
 		--function-name $(LAMBDA_FUNCTION_NAME) \
-		--payload '{"file_to_obfuscate":"s3://$(BUCKET_NAME)/$(LARGE_PII_DATA_KEY)","pii_fields":$(PII_FIELDS),"destination_bucket":"$(BUCKET_NAME)"}' \
+		--payload '{"file_to_obfuscate":"s3://$(BUCKET_NAME)/$(PII_DATA_KEY_LARGE)","pii_fields":$(PII_FIELDS),"destination_bucket":"$(BUCKET_NAME)"}' \
 		--cli-binary-format raw-in-base64-out \
 		response.json
 	@cat response.json | jq .
+
+.PHONY: sample-infrastructure-get-data
+sample-infrastructure-get-output: ## Get the obfuscated files
+	@cd infrastructure && pulumi stack output --stack $(STACK_NAME)
 
 
