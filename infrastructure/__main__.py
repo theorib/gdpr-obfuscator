@@ -49,8 +49,8 @@ lambda_function = create_lambda_function(
 
 pulumi.export("bucket_name", s3_resources["test_data_bucket"].id)
 pulumi.export("bucket_arn", s3_resources["test_data_bucket"].arn)
-pulumi.export("complex_pii_data_key", test_data["complex_pii_data"].key)
-pulumi.export("large_pii_data_key", test_data["large_pii_data"].key)
+pulumi.export("pii_data_key_complex", test_data["complex_pii_data"].key)
+pulumi.export("pii_data_key_large", test_data["large_pii_data"].key)
 pulumi.export("lambda_role_arn", lambda_role["lambda_role"].arn)
 pulumi.export("lambda_function_arn", lambda_function["lambda_function"].arn)
 pulumi.export("lambda_function_name", lambda_function["lambda_function"].name)
