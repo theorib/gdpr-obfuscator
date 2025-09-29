@@ -325,6 +325,7 @@ source = { editable = "." }
 dependencies = [
     { name = "boto3" },
     { name = "polars" },
+    { name = "types-boto3-s3" },
 ]
 
 [package.dev-dependencies]
@@ -342,6 +343,7 @@ dev = [
 requires-dist = [
     { name = "boto3", specifier = "==1.40.35" },
     { name = "polars", specifier = "==1.33.1" },
+    { name = "types-boto3-s3" },
 ]
 
 [package.metadata.requires-dev]
