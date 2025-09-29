@@ -134,8 +134,7 @@ sample-infrastructure-run-test: sample-infrastructure-clean-obfuscated-files ## 
 		--function-name $(LAMBDA_FUNCTION_NAME) \
 		--payload '{"file_to_obfuscate":"s3://$(BUCKET_NAME)/$(PII_DATA_KEY_COMPLEX)","pii_fields":$(PII_FIELDS),"destination_bucket":"$(BUCKET_NAME)"}' \
 		--cli-binary-format raw-in-base64-out \
-		response.json
-	@cat response.json | jq .
+		/dev/stdout | jq .
 
 .PHONY: sample-infrastructure-run-test-large
 sample-infrastructure-run-test-large: sample-infrastructure-clean-obfuscated-files ## Test the Lambda function with the large PII data set
@@ -146,8 +145,7 @@ sample-infrastructure-run-test-large: sample-infrastructure-clean-obfuscated-fil
 		--function-name $(LAMBDA_FUNCTION_NAME) \
 		--payload '{"file_to_obfuscate":"s3://$(BUCKET_NAME)/$(PII_DATA_KEY_LARGE)","pii_fields":$(PII_FIELDS),"destination_bucket":"$(BUCKET_NAME)"}' \
 		--cli-binary-format raw-in-base64-out \
-		response.json
-	@cat response.json | jq .
+		/dev/stdout | jq .
 
 .PHONY: sample-infrastructure-get-data
 sample-infrastructure-get-output: ## Get the obfuscated files
