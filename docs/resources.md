@@ -4,6 +4,8 @@ Reference Links:
 [JSON to Parquet Compaction in AWS Lambda with Polars](https://freedium.cfd/https://medium.com/@sendoamoronta/json-to-parquet-compaction-in-aws-lambda-with-polars-5398c7e07319)
 [How to build a Python package with uv and install it locally](https://www.sarahglasmacher.com/how-to-build-python-package-uv/)
 [Profiling in Python: How to Find Performance Bottlenecks](https://realpython.com/python-profiling/#time-measure-the-execution-time)
+[Using Questionary](https://lyz-code.github.io/blue-book/questionary/)
+
 Project Dependencies and library Docs:
 
 - [uv](https://docs.astral.sh/uv/)
@@ -15,3 +17,4 @@ Project Dependencies and library Docs:
 - [moto](https://docs.getmoto.org/en/latest/docs/getting_started.html)
 - [mypy_boto3_builder](https://youtype.github.io/mypy_boto3_builder/)
 - [Type annotations for boto3](https://youtype.github.io/types_boto3_docs/)
+- [Questionary manual](https://questionary.readthedocs.io/en/stable/)
