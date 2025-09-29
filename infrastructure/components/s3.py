@@ -18,17 +18,8 @@ def create_test_buckets() -> dict[str, aws.s3.Bucket]:
         },
     )
 
-    lambda_layer_bucket = aws.s3.Bucket(
-        "lambda-layer-bucket",
-        tags={
-            "Project": "GDPR Obfuscator",
-            "Environment": "Dev",
-        },
-    )
-
     return {
         "test_data_bucket": test_data_bucket,
-        "lambda_layer_bucket": lambda_layer_bucket,
     }
 
 

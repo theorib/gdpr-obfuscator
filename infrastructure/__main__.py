@@ -32,13 +32,6 @@ lambda_test_bucket_s3_policies = create_lambda_s3_policies(
     lambda_name=test_lambda_name,
 )
 
-lambda_layer_bucket_s3_policies = create_lambda_s3_policies(
-    lambda_role_name=lambda_role["lambda_role"].name,
-    bucket_name="lambda-layer-bucket",
-    bucket_arn=s3_resources["lambda_layer_bucket"].arn.apply(lambda arn: f"{arn}/*"),  # type: ignore
-    lambda_name=test_lambda_name,
-)
-
 
 lambda_function = create_lambda_function(
     lambda_role_arn=lambda_role["lambda_role"].arn,
