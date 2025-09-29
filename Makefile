@@ -9,14 +9,14 @@ uv:  ## Install uv if it's not present
 	
 .PHONY: sync
 sync: uv ## Install dependencies
-	uv sync
+	@uv sync
 
 .PHONY: build-lambda-layer
-build-lambda-layer: ## Build AWS Lambda layer files without dependencies that are already included in the AWS Lambda environment
+build-lambda-layer: sync ## Build AWS Lambda layer files without dependencies that are already included in the AWS Lambda environment
 	rm -rf build
 	mkdir -p build
 	uv export --frozen --no-dev --no-editable --no-hashes | \
-	grep -v "^\.\|boto3\|botocore\|jmespath\|python-dateutil\|s3transfer\|six\|urllib3" > build/lambda-requirements.txt
+	grep -v "^\." | grep -v "^boto3=\|^botocore=\|^jmespath=\|^python-dateutil=\|^s3transfer=\|^six=\|^urllib3=" > build/lambda-requirements.txt
 
 	mkdir -p build/layer/python
 	uv pip install \
