@@ -8,6 +8,8 @@ from pathlib import Path
 from pstats import SortKey, Stats
 from unittest.mock import MagicMock, patch
 
+import boto3
+
 from src.gdpr_obfuscator.core.gdpr_obfuscator import gdpr_obfuscator
 
 
@@ -24,8 +26,8 @@ def main(
     expected_file_path = "tests/data/large_pii_data_obfuscated.csv"
 
     # Read test data
-    with open(test_file_path, "rb") as f:
-        test_file_data = f.read()
+
+    test_file_data = Path(test_file_path).read_bytes()
 
     # Read expected result for validation
     with open(expected_file_path, "rb") as f:
