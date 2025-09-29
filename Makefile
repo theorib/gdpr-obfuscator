@@ -77,3 +77,78 @@ checks: fix-all cov safe ## Run all checks
 
 .PHONY: setup
 setup: sync checks ## Runs all checks and instalation scripts to get your project running
+
+STACK_NAME := dev
+BUCKET_NAME = $(shell cd infrastructure && pulumi stack output bucket_name --stack $(STACK_NAME))
+LAMBDA_FUNCTION_NAME = $(shell cd infrastructure && pulumi stack output lambda_function_name --stack $(STACK_NAME))
+COMPLEX_PII_DATA_KEY = $(shell cd infrastructure && pulumi stack output complex_pii_data_key --stack $(STACK_NAME))
+LARGE_PII_DATA_KEY = $(shell cd infrastructure && pulumi stack output large_pii_data_key --stack $(STACK_NAME))
+PII_FIELDS=["name","email_address","phone_number","address"]
+
+.PHONY: sample-infrastructure-setup
+sample-infrastructure-setup: ## Set's up pulumi to be able to deploy sample infrastructure
+	@echo "Setting up sample infrastructure"
+	@echo "Checking AWS CLI setup..."
+	@which aws >/dev/null 2>&1 || (echo "❌ AWS CLI not found. Please install it: https://aws.amazon.com/cli/" && exit 1)
+	@echo "✅ AWS CLI found"
+	@echo "Testing AWS credentials..."
+	@aws sts get-caller-identity >/dev/null 2>&1 || (echo "❌ AWS credentials not configured or invalid. Run 'aws configure' to set them up." && exit 1)
+	@echo "✅ AWS credentials working"
+	@echo "Checking Pulumi CLI setup..."
+	@which pulumi >/dev/null 2>&1 || (echo "❌ Pulumi CLI not found. Please install it: https://www.pulumi.com/docs/get-started/install/" && exit 1)
+	@echo "✅ Pulumi CLI found"
+	@cd infrastructure && pulumi login
+	@cd infrastructure && (pulumi stack select $(STACK_NAME) 2>/dev/null || pulumi stack init $(STACK_NAME))
+	@echo "Installing Pulumi dependencies..."
+	@cd infrastructure && uv sync
+	@echo "Sample infrastructure setup complete"
+
+.PHONY: sample-infrastructure-clean-obfuscated-files
+sample-infrastructure-clean-obfuscated-files: ## Cleans up any obfuscated sample files from the AWS sample bucket
+	@echo "Cleaning obfuscated files from bucket: $(BUCKET_NAME)"
+	@aws s3api list-objects-v2 --bucket $(BUCKET_NAME) --query "Contents[?contains(Key, 'obfuscated')].Key" --output text | \
+	while read -r key; do \
+		if [ -n "$$key" ] && [ "$$key" != "None" ]; then \
+			echo "Deleting: $$key"; \
+			aws s3 rm "s3://$(BUCKET_NAME)/$$key"; \
+		fi; \
+	done
+	@echo "Cleanup complete"
+
+.PHONY: sample-infrastructure-deploy
+sample-infrastructure-deploy: ## Deploy the sample infrastructure to AWS
+	@echo "Deploying sample infrastructure"
+	@cd infrastructure && pulumi up --stack $(STACK_NAME) --yes
+	@echo "Sample infrastructure deployed"
+
+.PHONY: sample-infrastructure-destroy
+sample-infrastructure-destroy: sample-infrastructure-clean-obfuscated-files ## Destroy the sample infrastructure from AWS
+	@echo "Destroying sample infrastructure"
+	@cd infrastructure && pulumi destroy --stack $(STACK_NAME) --yes
+	@echo "Sample infrastructure destroyed"
+
+.PHONY: sample-infrastructure-test
+sample-infrastructure-test: sample-infrastructure-clean-obfuscated-files ## Test the Lambda function with the complex PII data set
+	@echo "Testing Lambda function: $(LAMBDA_FUNCTION_NAME)"
+	@echo "Using bucket: $(BUCKET_NAME)"
+	@echo "Using complex PII data key: $(COMPLEX_PII_DATA_KEY)"
+	aws lambda invoke \
+		--function-name $(LAMBDA_FUNCTION_NAME) \
+		--payload '{"file_to_obfuscate":"s3://$(BUCKET_NAME)/$(COMPLEX_PII_DATA_KEY)","pii_fields":$(PII_FIELDS),"destination_bucket":"$(BUCKET_NAME)"}' \
+		--cli-binary-format raw-in-base64-out \
+		response.json
+	@cat response.json | jq .
+
+.PHONY: sample-infrastructure-test-large
+sample-infrastructure-test-large: sample-infrastructure-clean-obfuscated-files ## Test the Lambda function with the large PII data set
+	@echo "Testing Lambda function: $(LAMBDA_FUNCTION_NAME)"
+	@echo "Using bucket: $(BUCKET_NAME)"
+	@echo "Using large PII data key: $(LARGE_PII_DATA_KEY)"
+	aws lambda invoke \
+		--function-name $(LAMBDA_FUNCTION_NAME) \
+		--payload '{"file_to_obfuscate":"s3://$(BUCKET_NAME)/$(LARGE_PII_DATA_KEY)","pii_fields":$(PII_FIELDS),"destination_bucket":"$(BUCKET_NAME)"}' \
+		--cli-binary-format raw-in-base64-out \
+		response.json
+	@cat response.json | jq .
+
+
