@@ -2,6 +2,25 @@
 
 ## Table of Contents
 
+- [Introduction](#introduction)
+- [Requirements](#requirements)
+- [Optional Requirements](#optional-requirements)
+- [Installing and using GDPR Obfuscator in your python Project](#installing-and-using-gdpr-obfuscator-in-your-python-project)
+  - [Installing with uv](#installing-with-uv)
+  - [Installing with pip](#installing-with-pip)
+  - [Using the GDPR Obfuscator package](#using-the-gdpr-obfuscator-package)
+    - [Example: obfuscating a csv file](#example-obfuscating-a-csv-file)
+    - [Example: Saving back to s3](#example-saving-back-to-s3)
+- [Local Development and Testing](#local-development-and-testing)
+  - [Requirements](#requirements-1)
+  - [Optional Requirements](#optional-requirements-1)
+  - [Installing uv](#installing-uv)
+  - [Cloning this repository](#cloning-this-repository)
+  - [Project Setup](#project-setup)
+  - [Makefile commands](#makefile-commands)
+  - [Deploying sample infrastructure into AWS](#deploying-sample-infrastructure-into-aws)
+
+
 ## Introduction
 The purpose of this project is to create a general-purpose [Python](https://www.python.org) package that can process data stored on an AWS S3 bucket, obfuscating any personally identifiable information (PII) the data may contain. The generated result is an exact copy of the original data, but with the specified data fields replaced with obfuscated values such as `***`.
 
@@ -26,7 +45,7 @@ You can install and use **GDPR Obfuscator** in your project using any package ma
 You will have to set up your python project first before installing this package. We provide instructions for [uv](#installing-with-uv) and [pip](#installing-with-pip).
 
 ### Installing with [uv](https://docs.astral.sh/uv/)
-If you haven't already, [install uv](README.md#installing-uv) and on your terminal, navigate to the directory where you wish to create your python project. Run the following command and follow the onscreen prompts:
+If you haven't already, [install uv](#installing-uv) and on your terminal, navigate to the directory where you wish to create your python project. Run the following command and follow the onscreen prompts:
 ```bash
 uv init
 ```
@@ -167,9 +186,9 @@ It will:
 
 #### To deploy the sample infrastructure, follow these steps:
 1. Make sure you have followed the steps above for:
-    - [Installing uv](README.md#installing-uv)
-    - [Cloning this repository](README.md#cloning-this-repository)
-    - [Project Setup](README.md#project-setup)
+    - [Installing uv](#installing-uv)
+    - [Cloning this repository](#cloning-this-repository)
+    - [Project Setup](#project-setup)
 2. Make sure you have [Pulumi](https://www.pulumi.com/product/infrastructure-as-code/) and the [aws cli](https://aws.amazon.com/cli/) installed and configured with your AWS credentials. 
 3. From the root of your cloned project directory, run:
 
@@ -182,7 +201,14 @@ It will:
 
     ```json
     {
-        "data": "sample data"
+        "file_to_obfuscate": "s3://test-bucket-name/large_pii_data.csv",
+        "pii_fields": [
+            "name",
+            "email_address",
+            "phone_number",
+            "address"
+        ],
+        "destination_bucket": "test-bucket-9526c18"
     }
     ```
 
