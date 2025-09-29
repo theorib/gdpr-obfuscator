@@ -160,6 +160,12 @@ On yout terminal, navigate to the directory where you want to install this proje
 ```bash
 git clone https://github.com/theorib/gdpr-obfuscator
 ```
+### Makefile commands
+We provide a series of Makefile commands to help you navigate this project. You can get a complete list of commands with a description of what they do by running:
+
+```bash
+make help
+```
 
 ### Project Setup
 Make sure uv and make are installed on your system and then from the root of your cloned project directory run:
@@ -170,45 +176,86 @@ make setup
 
 This will install all dependencies and run checks to ensure everything is set up correctly. You should see all tests passing as well as security and test coverage reports in your terminal 
 
-### Makefile commands
-We provide a series of Makefile commands to help you navigate this project. You can get a complete list of commands with a description of what they do by running:
-
-```bash
-make help
-```
 
 ### Deploying sample infrastructure into AWS
 This project contains Infrastructure as Code (IaC) scripts that can create sample infrastructure using the **GDPR Obfuscator** library  and deploy them to an AWS account using [Pulumi](https://www.pulumi.com/product/infrastructure-as-code/).
 
-It will:
-- Create a sample s3 bucket loaded with sample data.
-- Create a sample lambda function that can read from that s3 bucket, use the **GDPR Obfuscator** library to obfuscate the data and save the processed data back to s3.
+The current pulumi setup has the capacity to:
+- Create a sample s3 bucket
+- Load the s3 bucket with test data.
+- Create a sample lambda function that can read from that s3 bucket, and use the **GDPR Obfuscator** library to obfuscate data stored in the s3 bucket, saving the processed data back to s3.
 
 #### To deploy the sample infrastructure, follow these steps:
+Run all of the commands below from the root of your cloned repository.
 1. Make sure you have followed the steps above for:
     - [Installing uv](#installing-uv)
     - [Cloning this repository](#cloning-this-repository)
     - [Project Setup](#project-setup)
-2. Make sure you have [Pulumi](https://www.pulumi.com/product/infrastructure-as-code/) and the [aws cli](https://aws.amazon.com/cli/) installed and configured with your AWS credentials. 
-3. From the root of your cloned project directory, run:
-
+2. Make sure you have the [Pulumi](https://www.pulumi.com/docs/iac/download-install/) CLI installed as well as the [aws cli](https://aws.amazon.com/cli/) installed and configured with your AWS credentials. 
+3. Setup pulumi for this project:
     ```bash
-    make deploy
+    make sample-infrastructure-setup
     ```
-4. Log into your AWS account and navigate to the S3 console to see the sample bucket and data.
-5. Navigate to the Lambda console to see the sample lambda function.
-6. Create a test case in your lambda console to test the obfuscation functionality with the following json:
-
-    ```json
-    {
-        "file_to_obfuscate": "s3://test-bucket-name/large_pii_data.csv",
-        "pii_fields": [
-            "name",
-            "email_address",
-            "phone_number",
-            "address"
-        ],
-        "destination_bucket": "test-bucket-9526c18"
-    }
+4. Deploy sample infrastructure into your AWS account:
+    ```bash
+    make sample-infrastructure-deploy
     ```
+    This will create a sample s3 bucket, load test data, and create a sample lambda function.
 
+You can now login into your AWS Management Console and inspect the lambda and s3 buckets that were created as well as the sample data that was loaded into the bucket.
+
+##### Running live tests with the sample infrastructure and GDPR Obfuscator
+For convenience, we have provided a set of make scripts that you will run the lambda using the sample test files.
+
+The following command will send a test event to the lambda function using a small sample test file.
+```bash
+make sample-infrastructure-run-test
+```
+The following script will send a test event with a large, 1MB csv test file containing 7031 data rows.
+```bash
+make sample-infrastructure-run-test-large
+```
+After running these scripts, you can check the output files that will have been saved within the same test buckets in the AWS management console. The file keys will be suffixed with `_obfuscated` before the extension (example: `large_pii_data_obfuscated.csv`).
+
+Once you are done testing and want to clean up the AWS resources that were created, you can run:
+```bash
+make sample-infrastructure-destroy
+```
+
+##### Running manual tests on the sample infrastructure using the AWS management console
+
+You can also manually test the lambda by giving it a test event of your choosing. Make sure it references an existing bucket as well as existing file keys and pii fields. If you want to manually use the sample bucket and test data provided, you can get their values by running:
+```bash
+make sample-infrastructure-get-output
+```
+The csv columns included in those files are the following. You can pick and choose any combination of them to obfuscate: 
+```python
+[
+    "id", 
+    "name", 
+    "email_address", 
+    "phone_number", 
+    "date_of_birth", 
+    "address", 
+    "salary", 
+    "department", 
+    "hire_date", 
+    "project_code", 
+    "status", 
+    "region"
+]
+```
+
+The sample lambda, expects an event object as it's first argument and it should have the following shape:
+```json
+{
+    "file_to_obfuscate": "s3://<bucket-name>/<file-key>",
+    "pii_fields": [
+        "field_1",
+        "field_2",
+        "field_3",
+    ],
+    "destination_bucket": "<bucket-name>"
+}
+```
+Replace `<bucket-name>`,`<file-key>` and the `pii_fields` list with the values that you want (such as those from the `make sample-infrastructure-get-output` command). Or from any other bucket you may have that contains test data.
