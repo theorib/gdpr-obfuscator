@@ -34,7 +34,7 @@ def lambda_handler(event, context):
             ContentType="text/csv",
         )
 
-        logger.info("File uploaded to S3", extra={"s3_address": result_s3_address})
+        logger.info("File uploaded to S3", extra={"response": response})
 
         result = {
             "statusCode": 200,
