@@ -23,7 +23,7 @@ build-lambda-layer: ## Build AWS Lambda layer files without dependencies that ar
 			--no-installer-metadata \
 			--no-compile-bytecode \
 			--python-platform x86_64-manylinux2014 \
-			--python 3.13.2 \
+			--python 3.13 \
 			--target build/layer/python \
 			-r build/lambda-requirements.txt
 	uv pip install \
@@ -31,19 +31,17 @@ build-lambda-layer: ## Build AWS Lambda layer files without dependencies that ar
                 --no-compile-bytecode \
                 --target build/layer/python \
 				.
-	@echo "Lambda layer requirements.txt created at: build/lambda-requirements.txt"
-	@echo "Lambda layer folder created at: build/layer/python"
-	@echo "Lambda layer unziped size: $$(du -sh build/layer/python | cut -f1)"
+	@echo "📄 Lambda layer requirements.txt created at: build/lambda-requirements.txt"
+	@echo "📁 Lambda layer folder created at: build/layer/python"
+	@echo "📏 Lambda layer unziped size: $$(du -sh build/layer/python | cut -f1)"
 
 .PHONY: build-lambda-layer-zip
 build-lambda-layer-zip: build-lambda-layer ## Create an AWS Lambda layer zip file without dependencies that are already included in the AWS Lambda environment
 	mkdir -p dist
 	cd build/layer && zip -r ../../dist/gdpr-obfuscator-layer.zip .
-	@echo "**************"
-	@echo "Lambda layer zip created at: dist/gdpr-obfuscator-layer.zip"
-	@echo "Lambda layer unzipped size: $$(du -sh build/layer/python | cut -f1)"
-	@echo "Lambda layer zipped size: $$(du -sh dist/gdpr-obfuscator-layer.zip | cut -f1)"
-	@echo "**************"
+	@echo "📦 Lambda layer zip created at: dist/gdpr-obfuscator-layer.zip"
+	@echo "📏 Lambda layer unzipped size: $$(du -sh build/layer/python | cut -f1)"
+	@echo "🗜️  Lambda layer zipped size: $$(du -sh dist/gdpr-obfuscator-layer.zip | cut -f1)"
 	rm -rf build
 
 .PHONY: test
@@ -87,51 +85,51 @@ PII_FIELDS=["name","email_address","phone_number","address"]
 
 .PHONY: sample-infrastructure-setup
 sample-infrastructure-setup: ## Set's up pulumi to be able to deploy sample infrastructure
-	@echo "Setting up sample infrastructure"
-	@echo "Checking AWS CLI setup..."
+	@echo "🚀 Setting up sample infrastructure"
+	@echo "🔍 Checking AWS CLI setup..."
 	@which aws >/dev/null 2>&1 || (echo "❌ AWS CLI not found. Please install it: https://aws.amazon.com/cli/" && exit 1)
 	@echo "✅ AWS CLI found"
-	@echo "Testing AWS credentials..."
+	@echo "🔐 Testing AWS credentials..."
 	@aws sts get-caller-identity >/dev/null 2>&1 || (echo "❌ AWS credentials not configured or invalid. Run 'aws configure' to set them up." && exit 1)
 	@echo "✅ AWS credentials working"
-	@echo "Checking Pulumi CLI setup..."
+	@echo "🔍 Checking Pulumi CLI setup..."
 	@which pulumi >/dev/null 2>&1 || (echo "❌ Pulumi CLI not found. Please install it: https://www.pulumi.com/docs/get-started/install/" && exit 1)
 	@echo "✅ Pulumi CLI found"
 	@cd infrastructure && pulumi login
 	@cd infrastructure && (pulumi stack select $(STACK_NAME) 2>/dev/null || pulumi stack init $(STACK_NAME))
-	@echo "Installing Pulumi dependencies..."
+	@echo "📦 Installing Pulumi dependencies..."
 	@cd infrastructure && uv sync
-	@echo "Sample infrastructure setup complete"
+	@echo "✅ Sample infrastructure setup complete"
 
 .PHONY: sample-infrastructure-clean-obfuscated-files
 sample-infrastructure-clean-obfuscated-files: ## Cleans up any obfuscated sample files from the AWS sample bucket
-	@echo "Cleaning obfuscated files from bucket: $(BUCKET_NAME)"
+	@echo "🧹 Cleaning obfuscated files from bucket: $(BUCKET_NAME)"
 	@aws s3api list-objects-v2 --bucket $(BUCKET_NAME) --query "Contents[?contains(Key, 'obfuscated')].Key" --output text | \
 	while read -r key; do \
 		if [ -n "$$key" ] && [ "$$key" != "None" ]; then \
-			echo "Deleting: $$key"; \
+			echo "🗑️  Deleting: $$key"; \
 			aws s3 rm "s3://$(BUCKET_NAME)/$$key"; \
 		fi; \
 	done
-	@echo "Cleanup complete"
+	@echo "✅ Cleanup complete"
 
 .PHONY: sample-infrastructure-deploy
-sample-infrastructure-deploy: ## Deploy the sample infrastructure to AWS
-	@echo "Deploying sample infrastructure"
+sample-infrastructure-deploy: build-lambda-layer-zip## Deploy the sample infrastructure to AWS
+	@echo "🚀 Deploying sample infrastructure"
 	@cd infrastructure && pulumi up --stack $(STACK_NAME) --yes
-	@echo "Sample infrastructure deployed"
+	@echo "✅ Sample infrastructure deployed"
 
 .PHONY: sample-infrastructure-destroy
 sample-infrastructure-destroy: sample-infrastructure-clean-obfuscated-files ## Destroy the sample infrastructure from AWS
-	@echo "Destroying sample infrastructure"
+	@echo "💥 Destroying sample infrastructure"
 	@cd infrastructure && pulumi destroy --stack $(STACK_NAME) --yes
-	@echo "Sample infrastructure destroyed"
+	@echo "✅ Sample infrastructure destroyed"
 
 .PHONY: sample-infrastructure-test
 sample-infrastructure-test: sample-infrastructure-clean-obfuscated-files ## Test the Lambda function with the complex PII data set
-	@echo "Testing Lambda function: $(LAMBDA_FUNCTION_NAME)"
-	@echo "Using bucket: $(BUCKET_NAME)"
-	@echo "Using complex PII data key: $(COMPLEX_PII_DATA_KEY)"
+	@echo "🧪 Testing Lambda function: $(LAMBDA_FUNCTION_NAME)"
+	@echo "🪣 Using bucket: $(BUCKET_NAME)"
+	@echo "📄 Using complex PII data key: $(COMPLEX_PII_DATA_KEY)"
 	aws lambda invoke \
 		--function-name $(LAMBDA_FUNCTION_NAME) \
 		--payload '{"file_to_obfuscate":"s3://$(BUCKET_NAME)/$(COMPLEX_PII_DATA_KEY)","pii_fields":$(PII_FIELDS),"destination_bucket":"$(BUCKET_NAME)"}' \
@@ -141,9 +139,9 @@ sample-infrastructure-test: sample-infrastructure-clean-obfuscated-files ## Test
 
 .PHONY: sample-infrastructure-test-large
 sample-infrastructure-test-large: sample-infrastructure-clean-obfuscated-files ## Test the Lambda function with the large PII data set
-	@echo "Testing Lambda function: $(LAMBDA_FUNCTION_NAME)"
-	@echo "Using bucket: $(BUCKET_NAME)"
-	@echo "Using large PII data key: $(LARGE_PII_DATA_KEY)"
+	@echo "🧪 Testing Lambda function: $(LAMBDA_FUNCTION_NAME)"
+	@echo "🪣 Using bucket: $(BUCKET_NAME)"
+	@echo "📄 Using large PII data key: $(LARGE_PII_DATA_KEY)"
 	aws lambda invoke \
 		--function-name $(LAMBDA_FUNCTION_NAME) \
 		--payload '{"file_to_obfuscate":"s3://$(BUCKET_NAME)/$(LARGE_PII_DATA_KEY)","pii_fields":$(PII_FIELDS),"destination_bucket":"$(BUCKET_NAME)"}' \
