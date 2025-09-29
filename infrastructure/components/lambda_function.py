@@ -41,7 +41,6 @@ def create_lambda_function(
         layers=[lambda_layer.arn],
     )
 
-
-# return {
-#     # "function": lambda_function,
-# }
+    return {
+        "lambda_function": lambda_function,
+    }
