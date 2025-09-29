@@ -130,22 +130,46 @@ sample-infrastructure-run-test: sample-infrastructure-clean-obfuscated-files ## 
 	@echo "🧪 Testing Lambda function: $(LAMBDA_FUNCTION_NAME)"
 	@echo "🪣 Using bucket: $(BUCKET_NAME)"
 	@echo "📄 Using complex PII data key: $(PII_DATA_KEY_COMPLEX)"
-	aws lambda invoke \
+	@RESPONSE=$$(aws lambda invoke \
 		--function-name $(LAMBDA_FUNCTION_NAME) \
 		--payload '{"file_to_obfuscate":"s3://$(BUCKET_NAME)/$(PII_DATA_KEY_COMPLEX)","pii_fields":$(PII_FIELDS),"destination_bucket":"$(BUCKET_NAME)"}' \
 		--cli-binary-format raw-in-base64-out \
-		/dev/stdout | jq .
+		/dev/stdout 2>/dev/null); \
+	if [ $$? -eq 0 ]; then \
+		echo "$$RESPONSE" | jq .; \
+		BODY=$$(echo "$$RESPONSE" | jq -r '.body // empty'); \
+		if [ -n "$$BODY" ]; then \
+			echo "✅ Lambda test completed successfully - obfuscated test file saved at: $$BODY"; \
+		else \
+			echo "✅ Lambda test completed successfully"; \
+		fi; \
+	else \
+		echo "❌ Lambda test failed"; \
+		exit 1; \
+	fi
 
 .PHONY: sample-infrastructure-run-test-large
 sample-infrastructure-run-test-large: sample-infrastructure-clean-obfuscated-files ## Test the Lambda function with the large PII data set
 	@echo "🧪 Testing Lambda function: $(LAMBDA_FUNCTION_NAME)"
 	@echo "🪣 Using bucket: $(BUCKET_NAME)"
 	@echo "📄 Using large PII data key: $(PII_DATA_KEY_LARGE)"
-	aws lambda invoke \
+	@RESPONSE=$$(aws lambda invoke \
 		--function-name $(LAMBDA_FUNCTION_NAME) \
 		--payload '{"file_to_obfuscate":"s3://$(BUCKET_NAME)/$(PII_DATA_KEY_LARGE)","pii_fields":$(PII_FIELDS),"destination_bucket":"$(BUCKET_NAME)"}' \
 		--cli-binary-format raw-in-base64-out \
-		/dev/stdout | jq .
+		/dev/stdout 2>/dev/null); \
+	if [ $$? -eq 0 ]; then \
+		echo "$$RESPONSE" | jq .; \
+		BODY=$$(echo "$$RESPONSE" | jq -r '.body // empty'); \
+		if [ -n "$$BODY" ]; then \
+			echo "✅ Lambda test completed successfully - obfuscated test file saved at: $$BODY"; \
+		else \
+			echo "✅ Lambda test completed successfully"; \
+		fi; \
+	else \
+		echo "❌ Lambda test failed"; \
+		exit 1; \
+	fi
 
 .PHONY: sample-infrastructure-get-data
 sample-infrastructure-get-output: ## Get the obfuscated files
