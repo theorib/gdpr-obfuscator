@@ -36,7 +36,7 @@ def gdpr_obfuscator(
     """
     try:
         bucket, key = _parse_s3_path(file_to_obfuscate)
-        s3_client = boto3.client("s3")
+        s3_client = boto3.client("s3")  # type: ignore
 
         file = _get_file_from_s3(bucket, key, s3_client)
 
@@ -58,8 +58,6 @@ def gdpr_obfuscator(
         df_obfuscated = df.with_columns([
             pl.lit(masking_string).alias(col) for col in pii_fields
         ])
-        # print(df)
-        # print(df_obfuscated)
 
         buffer = io.BytesIO()
 
@@ -75,8 +73,6 @@ def gdpr_obfuscator(
         elif file_type == "parquet":
             df_obfuscated.write_parquet(file=buffer)
             result = buffer.getvalue()
-        else:
-            raise ValueError(f"Unsupported file type for writing: {file_type}")
 
         return result
 
