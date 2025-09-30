@@ -71,6 +71,18 @@ def test_files():
                     "address",
                 ],
             },
+            "edge_cases_null_values": {
+                "local_path": "tests/data/edge_cases_null_values.json",
+                "result_local_path": "tests/data/edge_cases_null_values_obfuscated.json",
+                "key": "edge_cases_null_values.json",
+                "result_key": "edge_cases_null_values_obfuscated.json",
+                "pii_fields": [
+                    "name",
+                    "email_address",
+                    "phone_number",
+                    "address",
+                ],
+            },
         },
         "csv": {
             "simple_pii_data": {
@@ -143,6 +155,15 @@ def test_files():
                     "email_address",
                     "phone_number",
                     "address",
+                ],
+            },
+            "simple_pii_data_different_masking_string": {
+                "local_path": "tests/data/simple_pii_data_different_masking_string.csv",
+                "result_local_path": "tests/data/simple_pii_data_different_masking_string_obfuscated.csv",
+                "key": "simple_pii_data_different_masking_string.csv",
+                "result_key": "simple_pii_data_different_masking_string_obfuscated.csv",
+                "pii_fields": [
+                    "email_address",
                 ],
             },
         },
