@@ -1,5 +1,7 @@
+import io
 from unittest.mock import MagicMock, patch
 
+import polars as pl
 import pytest
 from botocore.exceptions import ConnectionError
 from moto import mock_aws
@@ -282,6 +284,35 @@ class TestGDPRObfuscatorJSON:
 
         result = gdpr_obfuscator(file_to_obfuscate, pii_fields, file_type="json")
         assert result == expected
+
+
+@pytest.mark.describe("Test the gdpr_obfuscator function with parquet files")
+class TestGDPRObfuscatorParquet:
+    # @pytest.mark.skip
+    @pytest.mark.it(
+        "check that a parquet file with multiple matching columns to be obfuscated returns a valid parquet file with data from those columns obfuscated"
+    )
+    def test_parquet_multiple_matching_columns(
+        self,
+        s3_client_with_files,
+        test_files,
+        get_test_file,
+        mock_aws_bucket_name,
+    ):
+        file_to_obfuscate = f"s3://{mock_aws_bucket_name}/{test_files['parquet']['complex_pii_data']['key']}"
+        pii_fields = test_files["parquet"]["complex_pii_data"]["pii_fields"]
+        expected_bytes = get_test_file(
+            test_files["parquet"]["complex_pii_data"]["result_local_path"]
+        )
+
+        result = gdpr_obfuscator(file_to_obfuscate, pii_fields, file_type="parquet")
+        assert isinstance(result, bytes)
+
+        # For parquet files, compare DataFrame content rather than raw bytes
+        # since parquet encoding can vary while maintaining identical data
+        expected_df = pl.read_parquet(io.BytesIO(expected_bytes))
+        result_df = pl.read_parquet(io.BytesIO(result))
+        assert result_df.equals(expected_df)
 
 
 @pytest.mark.describe("Test _get_file_from_s3")

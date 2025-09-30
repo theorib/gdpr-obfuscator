@@ -14,7 +14,7 @@ def gdpr_obfuscator(
     file_to_obfuscate: str,
     pii_fields: List[str],
     masking_string: str = "***",
-    file_type: Literal["csv", "json"] = "csv",
+    file_type: Literal["csv", "json", "parquet"] = "csv",
 ) -> bytes:
     """
     Obfuscates personally identifiable information (PII) fields in a CSV file from an AWS S3 bucket.
@@ -23,7 +23,7 @@ def gdpr_obfuscator(
         file_to_obfuscate (str): S3 address to the file to be obfuscated. Formated as `s3://<bucket_name>/<file_key>` (e.g., "s3://my-bucket-name/some_file_to_obfuscate.csv")
         pii_fields (List[str]): List of column names containing PII to obfuscate (e.g. ["full_name", "date_of_birth", "address", "phone"])
         masking_string (str): String used to replace PII data (default is "***")
-        file_type (Literal["csv", "json"]): Type of file to obfuscate (default is "csv")
+        file_type (Literal["csv", "json", "parquet"]): Type of file to obfuscate (default is "csv")
 
     Raises:
         ValueError: If an empty file_to_obfuscate is passed
@@ -46,6 +46,8 @@ def gdpr_obfuscator(
             df = pl.read_csv(source=file)
         elif file_type == "json":
             df = pl.read_json(source=file)
+        elif file_type == "parquet":
+            df = pl.read_parquet(source=file)
         else:
             raise ValueError(f"Unsupported file type: {file_type}")
 
@@ -69,6 +71,9 @@ def gdpr_obfuscator(
                 result = result[:-1]
         elif file_type == "json":
             df_obfuscated.write_json(file=buffer)
+            result = buffer.getvalue()
+        elif file_type == "parquet":
+            df_obfuscated.write_parquet(file=buffer)
             result = buffer.getvalue()
         else:
             raise ValueError(f"Unsupported file type for writing: {file_type}")
