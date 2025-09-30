@@ -28,7 +28,6 @@ def create_lambda_function(
         layer_name=f"{lambda_name}-layer",
         code=lambda_layer_archive,
         compatible_runtimes=["python3.13"],
-        # source_code_hash=
     )
 
     lambda_function = aws.lambda_.Function(
@@ -39,8 +38,28 @@ def create_lambda_function(
         code=lambda_function_archive,
         timeout=200,
         layers=[lambda_layer.arn],
+        logging_config={
+            "log_format": "JSON",
+            "application_log_level": "INFO",
+            "system_log_level": "WARN",
+        },
+        tags={
+            "Project": "GDPR Obfuscator",
+            "Environment": "Dev",
+        },
+    )
+
+    log_group = aws.cloudwatch.LogGroup(
+        f"{lambda_name}-log-group",
+        name=lambda_function.name.apply(lambda name: f"/aws/lambda/{name}"),
+        retention_in_days=1,
+        tags={
+            "Project": "GDPR Obfuscator",
+            "Environment": "Dev",
+        },
     )
 
     return {
         "lambda_function": lambda_function,
+        "log_group": log_group,
     }

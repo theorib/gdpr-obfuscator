@@ -4,7 +4,7 @@ import os
 
 import pulumi
 import pulumi_aws as aws
-from components.iam import create_lambda_role, create_lambda_s3_policies
+from components.iam import create_lambda_role, create_lambda_s3_policies, create_lambda_logging_policy
 from components.lambda_function import create_lambda_function
 from components.s3 import create_test_buckets, create_test_data
 
@@ -37,6 +37,13 @@ lambda_function = create_lambda_function(
     lambda_role_arn=lambda_role["lambda_role"].arn,
     lambda_name=test_lambda_name,
     project_root=project_root,
+)
+
+lambda_logging_policy = create_lambda_logging_policy(
+    lambda_role_name=lambda_role["lambda_role"].name,
+    lambda_function_name=lambda_function["lambda_function"].name,
+    aws_region=aws_region,
+    account_id=account_id,
 )
 
 

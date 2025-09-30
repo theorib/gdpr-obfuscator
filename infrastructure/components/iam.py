@@ -4,6 +4,51 @@ import pulumi_aws as aws
 from pulumi import Output
 
 
+def create_lambda_logging_policy(
+    lambda_role_name, lambda_function_name, aws_region: str, account_id: str
+):
+    """
+    Create CloudWatch logging policy for Lambda function
+
+    :param lambda_role_name: Lambda role name (Output)
+    :param lambda_function_name: Final Lambda function name (Output with Pulumi suffix)
+    :param aws_region: AWS region
+    :param account_id: AWS account ID
+    :return: Lambda logging policy attachment
+    """
+    lambda_logging_policy_doc = aws.iam.get_policy_document(
+        version="2012-10-17",
+        statements=[
+            {
+                "effect": "Allow",
+                "actions": [
+                    "logs:CreateLogGroup",
+                    "logs:CreateLogStream",
+                    "logs:PutLogEvents",
+                ],
+                "resources": [
+                    lambda_function_name.apply(
+                        lambda name: f"arn:aws:logs:{aws_region}:{account_id}:log-group:/aws/lambda/{name}:*"
+                    )
+                ],
+            }
+        ],
+    )
+
+    lambda_logging_policy = aws.iam.Policy(
+        "lambda-logging-policy",
+        policy=lambda_logging_policy_doc.json,
+    )
+
+    lambda_logging_policy_attachment = aws.iam.RolePolicyAttachment(
+        "lambda-logging-policy-attachment",
+        role=lambda_role_name,
+        policy_arn=lambda_logging_policy.arn,
+    )
+
+    return {"lambda_logging_policy_attachment": lambda_logging_policy_attachment}
+
+
 def create_lambda_role(account_id: str, aws_region: str, lambda_name: str):
     """
     Create a Lambda role with the necessary policies for GDPR obfuscation
@@ -42,48 +87,13 @@ def create_lambda_role(account_id: str, aws_region: str, lambda_name: str):
         },
     )
 
-    # ------------------------------
-    # Lambda IAM Policies for Lambda Logging on CloudWatch
-    # ------------------------------
-
-    # Define
-    lambda_logging_policy_doc = aws.iam.get_policy_document(
-        version="2012-10-17",
-        statements=[
-            {
-                "effect": "Allow",
-                "actions": [
-                    "logs:CreateLogGroup",
-                    "logs:CreateLogStream",
-                    "logs:PutLogEvents",
-                ],
-                "resources": [
-                    f"arn:aws:logs:{aws_region}:{account_id}:log-group:/aws/lambda/{lambda_name}:*"
-                ],
-            }
-        ],
-    )
-    # Create
-    lambda_logging_policy = aws.iam.Policy(
-        f"{lambda_name}-lambda-logging-policy",
-        policy=lambda_logging_policy_doc.json,
-    )
-
-    # Attach
-    lambda_logging_policy_attachment = aws.iam.RolePolicyAttachment(
-        f"{lambda_name}-lambda-logging-policy-attachment",
-        role=lambda_role.name,
-        policy_arn=lambda_logging_policy.arn,
-    )
-
     return {
         "lambda_role": lambda_role,
-        "lambda_logging_policy_attachment": lambda_logging_policy_attachment,
     }
 
 
 def create_lambda_s3_policies(
-    lambda_role_name: str, bucket_name: str, bucket_arn: str, lambda_name: str
+    lambda_role_name, bucket_name: str, bucket_arn, lambda_name: str
 ):
     """
     Create S3 access policies for Lambda
