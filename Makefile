@@ -64,7 +64,7 @@ fix-all:  fmt lint ## Run Ruff linter and formatter
 
 .PHONY: cov
 cov: ## Run tests with coverage
-	uv run pytest --cov=src --cov-report=term-missing
+	uv run pytest --cov=src/gdpr_obfuscator --cov-report=term-missing
 
 .PHONY: safe
 safe: ## Run Bandit security scan
