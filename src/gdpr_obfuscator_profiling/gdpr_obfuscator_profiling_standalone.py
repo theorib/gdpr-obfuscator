@@ -8,8 +8,6 @@ from pathlib import Path
 from pstats import SortKey, Stats
 from unittest.mock import MagicMock, patch
 
-import boto3
-
 from src.gdpr_obfuscator.core.gdpr_obfuscator import gdpr_obfuscator
 
 
