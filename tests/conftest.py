@@ -20,6 +20,62 @@ def masking_string():
 @pytest.fixture(scope="package")
 def test_files():
     return {
+        "parquet": {
+            "complex_pii_data": {
+                "local_path": "tests/data/complex_pii_data.parquet",
+                "result_local_path": "tests/data/complex_pii_data_obfuscated.parquet",
+                "key": "complex_pii_data.parquet",
+                "result_key": "complex_pii_data_obfuscated.parquet",
+                "pii_fields": [
+                    "name",
+                    "email_address",
+                    "phone_number",
+                    "date_of_birth",
+                    "address",
+                ],
+            },
+            "large_pii_data": {
+                "local_path": "tests/data/large_pii_data.parquet",
+                "result_local_path": "tests/data/large_pii_data_obfuscated.parquet",
+                "key": "large_pii_data.parquet",
+                "result_key": "large_pii_data_obfuscated.parquet",
+                "pii_fields": [
+                    "name",
+                    "email_address",
+                    "phone_number",
+                    "date_of_birth",
+                    "address",
+                ],
+            },
+        },
+        "json": {
+            "complex_pii_data": {
+                "local_path": "tests/data/complex_pii_data.json",
+                "result_local_path": "tests/data/complex_pii_data_obfuscated.json",
+                "key": "complex_pii_data.json",
+                "result_key": "complex_pii_data_obfuscated.json",
+                "pii_fields": [
+                    "name",
+                    "email_address",
+                    "phone_number",
+                    "date_of_birth",
+                    "address",
+                ],
+            },
+            "large_pii_data": {
+                "local_path": "tests/data/large_pii_data.json",
+                "result_local_path": "tests/data/large_pii_data_obfuscated.json",
+                "key": "large_pii_data.json",
+                "result_key": "large_pii_data_obfuscated.json",
+                "pii_fields": [
+                    "name",
+                    "email_address",
+                    "phone_number",
+                    "date_of_birth",
+                    "address",
+                ],
+            },
+        },
         "csv": {
             "simple_pii_data": {
                 "local_path": "tests/data/simple_pii_data.csv",
@@ -93,7 +149,7 @@ def test_files():
                     "address",
                 ],
             },
-        }
+        },
     }
 
 
@@ -142,12 +198,13 @@ def s3_client_with_files(
 ) -> Generator[S3Client, None, None]:
     s3_client = s3_client_with_empty_test_bucket
 
-    for file in test_files["csv"].values():
-        with open(file["local_path"], mode="rb") as f:
-            s3_client.put_object(
-                Bucket=mock_aws_bucket_name,
-                Key=file["key"],
-                Body=f,
-            )
+    for key in test_files.keys():
+        for file in test_files[key].values():
+            with open(file["local_path"], mode="rb") as f:
+                s3_client.put_object(
+                    Bucket=mock_aws_bucket_name,
+                    Key=file["key"],
+                    Body=f,
+                )
 
     yield s3_client
