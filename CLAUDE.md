@@ -131,6 +131,7 @@ Follow the Conventional Commits specification with gitmoji for all commits:
 
 - **AWS SDK**: Expected to use boto3 for S3 operations
 - **Infrastructure as Code**: Pulumi for AWS infrastructure management and deployment automation
+- **AWS Profile**: Always run `export AWS_PROFILE=AWS` before executing any Pulumi infrastructure commands
 - **Testing Framework**: pytest with pytest-testdox and pytest-cov extensions, plus Moto for AWS service mocking
 - **Deployment Compatibility**: EC2, ECS, or Lambda within AWS ecosystem
 - **CLI Demo**: Optional command-line interface for demonstration purposes
