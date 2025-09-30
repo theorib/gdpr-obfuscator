@@ -1,5 +1,5 @@
 import io
-from unittest.mock import MagicMock, patch
+from unittest.mock import MagicMock
 
 import polars as pl
 import pytest
@@ -13,7 +13,6 @@ from src.gdpr_obfuscator.core.gdpr_obfuscator import (
 )
 
 
-# test for partial reads with line count
 @pytest.mark.describe("Test the gdpr_obfuscator function with CSV files")
 @mock_aws
 class TestGDPRObfuscatorCSV:
@@ -29,7 +28,9 @@ class TestGDPRObfuscatorCSV:
             f"s3://{mock_aws_bucket_name}/{test_files['csv']['simple_pii_data']['key']}"
         )
         pii_fields = test_files["csv"]["simple_pii_data"]["pii_fields"]
+
         result = gdpr_obfuscator(file_to_obfuscate, pii_fields)
+
         assert isinstance(result, bytes)
 
     # @pytest.mark.skip
@@ -48,7 +49,11 @@ class TestGDPRObfuscatorCSV:
         expected = get_test_file(test_files["csv"]["edge_cases_no_rows"]["local_path"])
 
         result = gdpr_obfuscator(file_to_obfuscate, pii_fields)
-        assert result == expected
+
+        expected_df = pl.read_csv(io.BytesIO(expected))
+        result_df = pl.read_csv(io.BytesIO(result))
+
+        assert result_df.equals(expected_df)
 
     # @pytest.mark.skip
     @pytest.mark.it(
@@ -65,12 +70,17 @@ class TestGDPRObfuscatorCSV:
             f"s3://{mock_aws_bucket_name}/{test_files['csv']['simple_pii_data']['key']}"
         )
         pii_fields = test_files["csv"]["simple_pii_data"]["pii_fields"]
-        expected = get_test_file(
+        expected_bytes = get_test_file(
             test_files["csv"]["simple_pii_data"]["result_local_path"]
         )
 
         result = gdpr_obfuscator(file_to_obfuscate, pii_fields)
-        assert result == expected
+
+        expected_df = pl.read_csv(io.BytesIO(expected_bytes))
+        result_df = pl.read_csv(io.BytesIO(result))
+
+        assert isinstance(result, bytes)
+        assert result_df.equals(expected_df)
 
     # @pytest.mark.skip
     @pytest.mark.it(
@@ -85,12 +95,16 @@ class TestGDPRObfuscatorCSV:
     ):
         file_to_obfuscate = f"s3://{mock_aws_bucket_name}/{test_files['csv']['complex_pii_data']['key']}"
         pii_fields = test_files["csv"]["complex_pii_data"]["pii_fields"]
-        expected = get_test_file(
+        expected_bytes = get_test_file(
             test_files["csv"]["complex_pii_data"]["result_local_path"]
         )
 
         result = gdpr_obfuscator(file_to_obfuscate, pii_fields)
-        assert result == expected
+
+        expected_df = pl.read_csv(io.BytesIO(expected_bytes))
+        result_df = pl.read_csv(io.BytesIO(result))
+
+        assert result_df.equals(expected_df)
 
     # @pytest.mark.skip
     @pytest.mark.it(
@@ -110,12 +124,16 @@ class TestGDPRObfuscatorCSV:
             "name",
             "address",
         ]
-        expected = get_test_file(
+        expected_bytes = get_test_file(
             test_files["csv"]["complex_pii_data"]["result_local_path"]
         )
 
         result = gdpr_obfuscator(file_to_obfuscate, pii_fields)
-        assert result == expected
+
+        expected_df = pl.read_csv(io.BytesIO(expected_bytes))
+        result_df = pl.read_csv(io.BytesIO(result))
+
+        assert result_df.equals(expected_df)
 
     # @pytest.mark.skip
     @pytest.mark.it(
@@ -130,12 +148,16 @@ class TestGDPRObfuscatorCSV:
     ):
         file_to_obfuscate = f"s3://{mock_aws_bucket_name}/{test_files['csv']['edge_cases_non_standard_chars']['key']}"
         pii_fields = test_files["csv"]["edge_cases_non_standard_chars"]["pii_fields"]
-        expected = get_test_file(
+        expected_bytes = get_test_file(
             test_files["csv"]["edge_cases_non_standard_chars"]["result_local_path"]
         )
 
         result = gdpr_obfuscator(file_to_obfuscate, pii_fields)
-        assert result == expected
+
+        expected_df = pl.read_csv(io.BytesIO(expected_bytes))
+        result_df = pl.read_csv(io.BytesIO(result))
+
+        assert result_df.equals(expected_df)
 
     # @pytest.mark.skip
     @pytest.mark.it(
@@ -152,7 +174,7 @@ class TestGDPRObfuscatorCSV:
         pii_fields = test_files["csv"]["simple_pii_data_different_masking_string"][
             "pii_fields"
         ]
-        expected = get_test_file(
+        expected_bytes = get_test_file(
             test_files["csv"]["simple_pii_data_different_masking_string"][
                 "result_local_path"
             ]
@@ -161,7 +183,11 @@ class TestGDPRObfuscatorCSV:
         result = gdpr_obfuscator(
             file_to_obfuscate, pii_fields, masking_string="##########"
         )
-        assert result == expected
+
+        expected_df = pl.read_csv(io.BytesIO(expected_bytes))
+        result_df = pl.read_csv(io.BytesIO(result))
+
+        assert result_df.equals(expected_df)
 
     # @pytest.mark.skip
     @pytest.mark.it(
@@ -176,12 +202,16 @@ class TestGDPRObfuscatorCSV:
     ):
         file_to_obfuscate = f"s3://{mock_aws_bucket_name}/{test_files['csv']['edge_cases_missing_data']['key']}"
         pii_fields = test_files["csv"]["edge_cases_missing_data"]["pii_fields"]
-        expected = get_test_file(
+        expected_bytes = get_test_file(
             test_files["csv"]["edge_cases_missing_data"]["result_local_path"]
         )
 
         result = gdpr_obfuscator(file_to_obfuscate, pii_fields)
-        assert result == expected
+
+        expected_df = pl.read_csv(io.BytesIO(expected_bytes))
+        result_df = pl.read_csv(io.BytesIO(result))
+
+        assert result_df.equals(expected_df)
 
     # @pytest.mark.skip
     @pytest.mark.it("check that an empty csv file raises a ValueError exception")
@@ -246,7 +276,7 @@ class TestGDPRObfuscatorCSV:
 class TestGDPRObfuscatorJSON:
     # @pytest.mark.skip
     @pytest.mark.it(
-        "check that a json file with multiple matching columns to be obfuscated returns a valid csv file with data from those columns obfuscated"
+        "check that a json file with multiple matching columns to be obfuscated returns a valid json file with data from those columns obfuscated"
     )
     def test_json_multiple_matching_columns(
         self,
@@ -257,13 +287,17 @@ class TestGDPRObfuscatorJSON:
     ):
         file_to_obfuscate = f"s3://{mock_aws_bucket_name}/{test_files['json']['complex_pii_data']['key']}"
         pii_fields = test_files["json"]["complex_pii_data"]["pii_fields"]
-        expected = get_test_file(
+        expected_bytes = get_test_file(
             test_files["json"]["complex_pii_data"]["result_local_path"]
         )
 
         result = gdpr_obfuscator(file_to_obfuscate, pii_fields, file_type="json")
+
+        expected_df = pl.read_json(io.BytesIO(expected_bytes))
+        result_df = pl.read_json(io.BytesIO(result))
+
         assert isinstance(result, bytes)
-        assert result == expected
+        assert result_df.equals(expected_df)
 
     # @pytest.mark.skip
     @pytest.mark.it(
@@ -278,12 +312,16 @@ class TestGDPRObfuscatorJSON:
     ):
         file_to_obfuscate = f"s3://{mock_aws_bucket_name}/{test_files['json']['edge_cases_null_values']['key']}"
         pii_fields = test_files["json"]["edge_cases_null_values"]["pii_fields"]
-        expected = get_test_file(
+        expected_bytes = get_test_file(
             test_files["json"]["edge_cases_null_values"]["result_local_path"]
         )
 
         result = gdpr_obfuscator(file_to_obfuscate, pii_fields, file_type="json")
-        assert result == expected
+
+        expected_df = pl.read_json(io.BytesIO(expected_bytes))
+        result_df = pl.read_json(io.BytesIO(result))
+
+        assert result_df.equals(expected_df)
 
 
 @pytest.mark.describe("Test the gdpr_obfuscator function with parquet files")
@@ -306,12 +344,11 @@ class TestGDPRObfuscatorParquet:
         )
 
         result = gdpr_obfuscator(file_to_obfuscate, pii_fields, file_type="parquet")
-        assert isinstance(result, bytes)
 
-        # For parquet files, compare DataFrame content rather than raw bytes
-        # since parquet encoding can vary while maintaining identical data
         expected_df = pl.read_parquet(io.BytesIO(expected_bytes))
         result_df = pl.read_parquet(io.BytesIO(result))
+
+        assert isinstance(result, bytes)
         assert result_df.equals(expected_df)
 
 
@@ -330,8 +367,9 @@ class TestGetFileFromS3:
         expected = get_test_file(test_files["csv"]["complex_pii_data"]["local_path"])
 
         result = _get_file_from_s3(mock_aws_bucket_name, key, s3_client_with_files)
-        assert result == expected
+
         assert isinstance(result, bytes)
+        assert result == expected
 
     # @pytest.mark.skip
     @pytest.mark.it("check that an invalid s3 key raises a FileNotFoundError exception")
@@ -407,6 +445,7 @@ class TestGetParseS3Pathget_parse_s3_path:
     def test_get_parse_s3_path(self):
         path = "s3://bucket_name/file_key.csv"
         bucket, key = _parse_s3_path(path)
+
         assert bucket == "bucket_name"
         assert key == "file_key.csv"
 
@@ -417,6 +456,7 @@ class TestGetParseS3Pathget_parse_s3_path:
     def test_get_parse_s3_path_with_nested_directories(self):
         path = "s3://bucket_name/dir1/dir2/dir3/file_key.csv"
         bucket, key = _parse_s3_path(path)
+
         assert bucket == "bucket_name"
         assert key == "dir1/dir2/dir3/file_key.csv"
 
@@ -427,6 +467,7 @@ class TestGetParseS3Pathget_parse_s3_path:
     def test_key_with_multiple_extensions(self):
         path = "s3://bucket_name/file_key.csv.gz"
         bucket, key = _parse_s3_path(path)
+
         assert bucket == "bucket_name"
         assert key == "file_key.csv.gz"
 
@@ -435,6 +476,7 @@ class TestGetParseS3Pathget_parse_s3_path:
     def test_invalid_s3_path_exception(self):
         with pytest.raises(FileNotFoundError) as error:
             _parse_s3_path("bucket_name/file_key.csv")
+
         assert (
             str(error.value) == 'Invalid S3 path: Missing or malformed "s3://" prefix'
         )
@@ -446,4 +488,5 @@ class TestGetParseS3Pathget_parse_s3_path:
     def test_empty_path_exception(self):
         with pytest.raises(FileNotFoundError) as error:
             _parse_s3_path("")
+
         assert str(error.value) == "Invalid S3 path: Empty path string"
