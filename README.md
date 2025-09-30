@@ -28,12 +28,12 @@ The purpose of this project is to create a general-purpose [Python](https://www.
 
 The package is designed to ingest data directly from a specified AWS S3 bucket. It returns a `bytes` object that can be easily stored back into a file on an S3 bucket or be further processed in the data pipeline. The package can be easily integrated into existing AWS services such as Lambda, Glue, Step Functions, EC2 instances, etc, being fully compatible with serverless environments.
 
-It is written in [python](https://www.python.org), it is\ fully tested, PEP-8 compliant, and follows best practices for security and performance.
+It is written in [python](https://www.python.org), it is fully tested, PEP-8 compliant, and follows best practices for security and performance.
 
 Currently the package supports ingesting and processing CSV files.
 
 ## Requirements
-- Be confortable with the basics of running terminal commands using a [terminal emulator](https://en.wikipedia.org/wiki/Terminal_emulator) and have a terminal emulator installed in your computer.
+- Be comfortable with the basics of running terminal commands using a [terminal emulator](https://en.wikipedia.org/wiki/Terminal_emulator) and have a terminal emulator installed in your computer.
 - A basic understanding of [python](https://www.python.org).
 - [Python](https://www.python.org) version 3.10 or higher installed and configured in your computer. If you haven't, you can install python using [uv](#installing-uv) or following the instructions on [installing python](https://www.python.org) manually.
 
@@ -119,10 +119,10 @@ response = s3_client.put_object(
 
 ## Local Development and Testing
 
-You will need a [terminal emulator](https://en.wikipedia.org/wiki/Terminal_emulator) to run this project in a local development environment as well as [git](https://git-scm.com/downloads), [make](https://www.gnu.org/software/make/) and [uv](https://docs.astral.sh/uv/) installed. 
-Additionally, to run sample infrastructure in AWS, you will need and AWS account setup and running, as well as the [aws cli](https://aws.amazon.com/cli/) installed and configured with your credentials. You will also need [Pulumi](https://www.pulumi.com/product/infrastructure-as-code/) installed and configured with your AWS credentials.
+You will need a [terminal emulator](https://en.wikipedia.org/wiki/Terminal_emulator) to run this project in a local development environment as well as [git](https://git-scm.com/downloads), [make](https://www.gnu.org/software/make/) and [uv](https://docs.astral.sh/uv/) installed.
+Additionally, to run sample infrastructure in AWS, you will need an AWS account setup and running, as well as the [aws cli](https://aws.amazon.com/cli/) installed and configured with your credentials. You will also need [Pulumi](https://www.pulumi.com/product/infrastructure-as-code/) installed and configured with your AWS credentials.
 
-Except for uv, Installing these tools is beyoud the scope of this project but you can find more information online or by following the outlined links. 
+Except for uv, installing these tools is beyond the scope of this project but you can find more information online or by following the outlined links. 
 
 A terminal emulator comes builtin on MacOS and Linux, and can be easily installed on Windows using [Windows Terminal](https://docs.microsoft.com/en-us/windows/terminal/).
 
@@ -157,7 +157,7 @@ powershell -ExecutionPolicy ByPass -c "irm https://astral.sh/uv/install.ps1 | ie
 If you are running any different setup or are having issues installing uv, please refer to the [uv documentation](https://docs.astral.sh/uv/getting-started/installation/) for more information.
 
 ### Cloning this repository
-On yout terminal, navigate to the directory where you want to install this project and clone this repository to your local machine using the following command:
+On your terminal, navigate to the directory where you want to install this project and clone this repository to your local machine using the following command:
 
 ```bash
 git clone https://github.com/theorib/gdpr-obfuscator
