@@ -334,20 +334,7 @@ make sample-infrastructure-get-output
 The csv columns included in those files are the following. You can pick and choose any combination of them to obfuscate:
 
 ```python
-[
-    "id", 
-    "name", 
-    "email_address", 
-    "phone_number", 
-    "date_of_birth", 
-    "address", 
-    "salary", 
-    "department", 
-    "hire_date", 
-    "project_code", 
-    "status", 
-    "region"
-]
+["id", "name", "email_address", "phone_number", "date_of_birth", "address", "salary", "department", "hire_date", "project_code", "status", "region"]
 ```
 
 The sample lambda, expects an event object as it's first argument and it should have the following shape:
