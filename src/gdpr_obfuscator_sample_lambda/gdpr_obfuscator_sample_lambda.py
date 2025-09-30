@@ -21,7 +21,7 @@ def lambda_handler(event, context):
 
         result = gdpr_obfuscator(event["file_to_obfuscate"], event["pii_fields"])
 
-        logger.info("Obfuscation complete", extra={"result": result})
+        logger.info("Obfuscation complete")
 
         result_filename = f"{filename_base}_obfuscated{file_extension}"
 
