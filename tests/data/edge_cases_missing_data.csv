@@ -1,3 +1,5 @@
 id,name,email_address,phone_number,date_of_birth,address,salary,department,hire_date,project_code,status,region
-1,"O'Connor, Mary-Jane",mary.jane@email.com,,1985-02-29,"123 ""Main"" St, London, UK",,Engineering,2020-01-15,PROJ-001,Active,North
-2,,empty.user@email.com,+44-20-7946-0958,,,0,Marketing,,PROJ-002,,
+1,John Smith,john.smith@email.com,+44-20-7946-0958,1985-03-15,"123 Main St, London, UK",75000,Engineering,2020-01-15,PROJ-001,Active,North
+2,Sarah Johnson,sarah.j@company.co.uk,+44-161-496-0077,1990-07-22,"456 Oak Ave, Manchester, UK",68000,Marketing,2019-08-10,PROJ-002,Active,North
+3,"O'Connor, Mary-Jane",mary.jane@email.com,,1985-02-29,"123 ""Main"" St, London, UK",,Engineering,2020-01-15,PROJ-001,Active,North
+4,,empty.user@email.com,+44-20-7946-0958,,,0,Marketing,,PROJ-002,,
