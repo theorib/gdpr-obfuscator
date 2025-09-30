@@ -267,7 +267,7 @@ class TestGDPRObfuscatorCSV:
 
         with pytest.raises(
             KeyError,
-            match=r'"PII fields not found in CSV: \[\'nonexistent_column\', \'nonexistent_column_2\'\]"',
+            match=r"PII fields not found.*nonexistent_column.*nonexistent_column_2",
         ):
             gdpr_obfuscator(file_to_obfuscate, pii_fields)
 
@@ -322,6 +322,23 @@ class TestGDPRObfuscatorJSON:
         result_df = pl.read_json(io.BytesIO(result))
 
         assert result_df.equals(expected_df)
+
+    # @pytest.mark.skip
+    @pytest.mark.it("check that an invalid file_type argument raises a ValueError")
+    def test_invalid_file_type_argument_raises_value_error(
+        self,
+        s3_client_with_files,
+        test_files,
+        get_test_file,
+        mock_aws_bucket_name,
+    ):
+        file_to_obfuscate = (
+            f"s3://{mock_aws_bucket_name}/{test_files['csv']['simple_pii_data']['key']}"
+        )
+        pii_fields = test_files["csv"]["simple_pii_data"]["pii_fields"]
+
+        with pytest.raises(ValueError, match="Unsupported file type"):
+            gdpr_obfuscator(file_to_obfuscate, pii_fields, file_type="invalid")  # type: ignore
 
 
 @pytest.mark.describe("Test the gdpr_obfuscator function with parquet files")
