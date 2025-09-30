@@ -2,7 +2,7 @@
 
 import io
 from pathlib import Path
-from typing import List, Tuple
+from typing import List, Literal, Tuple
 
 import boto3
 import polars as pl
@@ -10,13 +10,20 @@ from botocore.exceptions import ClientError
 from types_boto3_s3.client import S3Client
 
 
-def gdpr_obfuscator(file_to_obfuscate: str, pii_fields: List[str]) -> bytes:
+def gdpr_obfuscator(
+    file_to_obfuscate: str,
+    pii_fields: List[str],
+    masking_string: str = "***",
+    file_type: Literal["csv", "json"] = "csv",
+) -> bytes:
     """
     Obfuscates personally identifiable information (PII) fields in a CSV file from an AWS S3 bucket.
 
     Args:
-        file_to_obfuscate (str): S3 address to the CSV file to be obfuscated. Formated as `s3://<bucket_name>/<file_key>` (e.g., "s3://my-bucket-name/some_file_to_obfuscate.csv")
+        file_to_obfuscate (str): S3 address to the file to be obfuscated. Formated as `s3://<bucket_name>/<file_key>` (e.g., "s3://my-bucket-name/some_file_to_obfuscate.csv")
         pii_fields (List[str]): List of column names containing PII to obfuscate (e.g. ["full_name", "date_of_birth", "address", "phone"])
+        masking_string (str): String used to replace PII data (default is "***")
+        file_type (Literal["csv", "json"]): Type of file to obfuscate (default is "csv")
 
     Raises:
         ValueError: If an empty file_to_obfuscate is passed
@@ -35,24 +42,36 @@ def gdpr_obfuscator(file_to_obfuscate: str, pii_fields: List[str]) -> bytes:
 
         has_trailing_newline = file.endswith(b"\n")
 
-        df = pl.read_csv(source=file)
+        if file_type == "csv":
+            df = pl.read_csv(source=file)
+        elif file_type == "json":
+            df = pl.read_json(source=file)
+        else:
+            raise ValueError(f"Unsupported file type: {file_type}")
 
         missing_columns = [col for col in pii_fields if col not in df.columns]
         if missing_columns:
             raise KeyError(f"PII fields not found in CSV: {missing_columns}")
 
         df_obfuscated = df.with_columns([
-            pl.lit("***").alias(col) for col in pii_fields
+            pl.lit(masking_string).alias(col) for col in pii_fields
         ])
         # print(df)
         # print(df_obfuscated)
 
         buffer = io.BytesIO()
-        df_obfuscated.write_csv(file=buffer)
-        result = buffer.getvalue()
 
-        if not has_trailing_newline and result.endswith(b"\n"):
-            result = result[:-1]
+        if file_type == "csv":
+            df_obfuscated.write_csv(file=buffer)
+            result = buffer.getvalue()
+
+            if not has_trailing_newline and result.endswith(b"\n"):
+                result = result[:-1]
+        elif file_type == "json":
+            df_obfuscated.write_json(file=buffer)
+            result = buffer.getvalue()
+        else:
+            raise ValueError(f"Unsupported file type for writing: {file_type}")
 
         return result
 
