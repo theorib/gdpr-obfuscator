@@ -19,6 +19,8 @@
   - [Project Setup](#project-setup)
   - [Makefile commands](#makefile-commands)
   - [Deploying sample infrastructure into AWS](#deploying-sample-infrastructure-into-aws)
+    - [Running live tests with the sample infrastructure and GDPR Obfuscator](#running-live-tests-with-the-sample-infrastructure-and-gdpr-obfuscator)
+    - [Running manual tests on the sample infrastructure using the AWS management console](#running-manual-tests-on-the-sample-infrastructure-using-the-aws-management-console)
 
 
 ## Introduction
