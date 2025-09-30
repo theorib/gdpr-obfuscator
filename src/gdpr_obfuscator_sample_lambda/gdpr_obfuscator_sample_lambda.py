@@ -40,6 +40,7 @@ def lambda_handler(event, context):
             "statusCode": 200,
             "body": result_s3_address,
         }
+        logger.info("Returning result", extra={"result": result})
 
         return result
 
