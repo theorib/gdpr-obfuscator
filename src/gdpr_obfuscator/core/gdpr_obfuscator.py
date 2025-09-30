@@ -17,18 +17,18 @@ def gdpr_obfuscator(
     file_type: Literal["csv", "json", "parquet"] = "csv",
 ) -> bytes:
     """
-    Obfuscates personally identifiable information (PII) fields in a CSV file from an AWS S3 bucket.
+    Obfuscates personally identifiable information (PII) fields in CSV, JSON and Parquet files retrieved from an AWS S3 bucket.
 
     Args:
         file_to_obfuscate (str): S3 address to the file to be obfuscated. Formated as `s3://<bucket_name>/<file_key>` (e.g., "s3://my-bucket-name/some_file_to_obfuscate.csv")
         pii_fields (List[str]): List of column names containing PII to obfuscate (e.g. ["full_name", "date_of_birth", "address", "phone"])
         masking_string (str): String used to replace PII data (default is "***")
-        file_type (Literal["csv", "json", "parquet"]): Type of file to obfuscate (default is "csv")
+        file_type (Literal["csv", "json", "parquet"]): Type of file to obfuscate (default is "csv"), can be one of `csv`, `json`, or `parquet`
 
     Raises:
         ValueError: If an empty file_to_obfuscate is passed
         FileNotFoundError: If the specified file doesn't exist (invalid s3 path)
-        KeyError: If specified PII fields are not found in the CSV file
+        KeyError: If specified PII fields are not found in the file
         RuntimeError: If an unexpected S3 response error occurs
 
     Returns:
@@ -53,7 +53,7 @@ def gdpr_obfuscator(
 
         missing_columns = [col for col in pii_fields if col not in df.columns]
         if missing_columns:
-            raise KeyError(f"PII fields not found in CSV: {missing_columns}")
+            raise KeyError(f"PII fields not found: {missing_columns}")
 
         df_obfuscated = df.with_columns([
             pl.lit(masking_string).alias(col) for col in pii_fields

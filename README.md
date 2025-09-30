@@ -17,6 +17,8 @@
       - [Returns](#returns)
     - [Examples](#examples)
       - [Obfuscating a CSV file](#obfuscating-a-csv-file)
+      - [Obfuscating a Parquet file](#obfuscating-a-parquet-file)
+      - [Obfuscating a JSON file with a custom masking string](#obfuscating-a-json-file-with-a-custom-masking-string)
       - [Saving back to s3](#saving-back-to-s3)
     - [Notes](#notes)
   - [Error Handling](#error-handling)
@@ -46,7 +48,7 @@ The package is designed to ingest data directly from a specified AWS S3 bucket. 
 
 It is written in [python](https://www.python.org), it is fully tested, PEP-8 compliant, and follows best practices for security and performance.
 
-Currently the package supports ingesting and processing CSV files.
+Currently the package supports ingesting and processing CSV, JSON, and Parquet files.
 
 ## Requirements
 
@@ -97,18 +99,20 @@ pip install git+https://github.com/theorib/gdpr-obfuscator.git
 
 ### `gdpr_obfuscator(file_to_obfuscate, pii_fields)`
 
-This is the main function that processes CSV files and obfuscates specified PII fields.
+This is the main function that processes CSV, JSON, and Parquet files and obfuscates specified PII fields.
 
 #### Parameters
 
-- `file_to_obfuscate` (`str`): S3 address to the CSV file to be obfuscated. Formatted as `s3://<bucket_name>/<file_key>` (e.g., `s3://my-bucket-name/some_file_to_obfuscate.csv`)
+- `file_to_obfuscate` (`str`): S3 address to the file to be obfuscated. Formatted as `s3://<bucket_name>/<file_key>` (e.g., `s3://my-bucket-name/some_file_to_obfuscate.csv`)
 - `pii_fields` (`list[str]`): List of column names (or fields) that contain PII data to be obfuscated (e.g. `["full_name", "date_of_birth", "address", "phone"]`)
+- `masking_string` (`str`): String used to replace PII data (default is `"***"`)
+- `file_type` (`Literal["csv", "json", "parquet"]`): Type of file to obfuscate (default is "csv"), can be one of `csv`, `json`, or `parquet`
 
 #### Raises
 
 - `ValueError`: If an empty `file_to_obfuscate` is passed
 - `FileNotFoundError`: If the specified file doesn't exist (invalid s3 path)
-- `KeyError`: If any of the specified `pii_fields` are not found in the CSV file
+- `KeyError`: If any of the specified `pii_fields` are not found in the file
 - `RuntimeError`: If an unexpected S3 response error occurs
 
 #### Returns
@@ -126,6 +130,31 @@ from gdpr_obfuscator import gdpr_obfuscator
 result = gdpr_obfuscator(
     "s3://my-bucket/customer-data.csv",
     ["email", "phone", "address"]
+)
+```
+
+#### Obfuscating a Parquet file
+
+```python
+from gdpr_obfuscator import gdpr_obfuscator
+
+result = gdpr_obfuscator(
+    "s3://my-bucket/customer-data.parquet",
+    ["email", "phone", "address"],
+    file_type="parquet"
+)
+```
+
+#### Obfuscating a JSON file with a custom masking string
+
+```python
+from gdpr_obfuscator import gdpr_obfuscator
+
+result = gdpr_obfuscator(
+    "s3://my-bucket/customer-data.json",
+    ["email", "phone", "address"],
+    masking_string="#######",
+    file_type="json"
 )
 ```
 
@@ -151,11 +180,10 @@ response = s3_client.put_object(
 
 ### Notes
 
-- All PII field values are replaced with `***`
+- All PII field values are replaced with `***` by default but can be customized using the `masking_string` parameter
 - Non-PII columns remain unchanged
 - Original file structure and formatting is preserved
-- Compatible only with CSV files
-- Compatible with any CSV file structure
+- Compatible with CSV, JSON, and Parquet files
 
 ## Error Handling
 
@@ -185,14 +213,16 @@ The GDPR Obfuscator handles common issues (see [Raises](#raises) above) and prov
 #### Missing PII Fields
 
 - **Error:** `KeyError`
-- **Error Message:** `PII fields not found in CSV: ["Email"]`
+- **Error Message:** `PII fields not found: ["Email"]`
 - **Solution:** Check your CSV headers match the `pii_fields` exactly
 - **Case-sensitive:** `"Email"` ≠ `"email"`
 
 #### File Format Issues
 
-- Only CSV files are currently supported
-- Files must have proper CSV headers in the first row
+- Only CSV, JSON, and Parquet files are currently supported
+- CSV Files must have proper CSV headers in the first row
+- JSON Files must have proper JSON structure
+- Parquet Files must have proper Parquet structure
 - Maximum file size: 1MB for optimal performance
 
 ## Local Development and Testing
