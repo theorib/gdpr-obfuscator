@@ -76,5 +76,6 @@
     "**/CVS": true,
     "**/.DS_Store": true
   },
-  "hidefiles.selectedProfile": "Show All Files"
+  "hidefiles.selectedProfile": "Show All Files",
+  "json.format.enable": false
 }
