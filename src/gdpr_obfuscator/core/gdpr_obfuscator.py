@@ -15,8 +15,8 @@ def gdpr_obfuscator(file_to_obfuscate: str, pii_fields: List[str]) -> bytes:
     Obfuscates personally identifiable information (PII) fields in a CSV file from an AWS S3 bucket.
 
     Args:
-        file_to_obfuscate (str): S3 path to the CSV file (e.g., "s3://bucket_name/file_key.csv")
-        pii_fields (List[str]): List of column names containing PII to obfuscate
+        file_to_obfuscate (str): S3 address to the CSV file to be obfuscated. Formated as `s3://<bucket_name>/<file_key>` (e.g., "s3://my-bucket-name/some_file_to_obfuscate.csv")
+        pii_fields (List[str]): List of column names containing PII to obfuscate (e.g. ["full_name", "date_of_birth", "address", "phone"])
 
     Raises:
         ValueError: If an empty file_to_obfuscate is passed
