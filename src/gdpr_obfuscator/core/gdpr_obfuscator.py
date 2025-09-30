@@ -55,9 +55,9 @@ def gdpr_obfuscator(
         if missing_columns:
             raise KeyError(f"PII fields not found: {missing_columns}")
 
-        df_obfuscated = df.with_columns([
-            pl.lit(masking_string).alias(col) for col in pii_fields
-        ])
+        df_obfuscated = df.with_columns(
+            [pl.lit(masking_string).alias(col) for col in pii_fields]
+        )
 
         buffer = io.BytesIO()
 
