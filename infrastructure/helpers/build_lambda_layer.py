@@ -1,11 +1,11 @@
 import os
 import subprocess
-import zipfile
-from pathlib import Path
 from typing import List
 
 
-def generate_lambda_dependency_requirements() -> List[str]:
+def generate_lambda_dependency_requirements(
+    project_root: str,
+) -> List[str]:
     """Generate a list of dependencies for the Lambda layer, excluding AWS runtime dependencies.
 
     Returns:
@@ -28,6 +28,8 @@ def generate_lambda_dependency_requirements() -> List[str]:
             [
                 "uv",
                 "export",
+                "--directory",
+                project_root,
                 "--frozen",
                 "--no-dev",
                 "--no-editable",
@@ -63,10 +65,12 @@ def generate_lambda_dependency_requirements() -> List[str]:
         return []
 
 
-def install_lambda_layer_dependencies(
-    dependencies: List[str], target_dir: str = "build/layers/deps/python"
+def build_lambda_dependencies_layer(
+    dependencies: List[str],
+    project_root: str,
+    target_dir: str = "build/layers/deps/python",
 ):
-    """Install dependencies for the Lambda layer.
+    """Build dependencies for the Lambda layer.
 
     Args:
         dependencies (List[str]): _description_
@@ -82,6 +86,8 @@ def install_lambda_layer_dependencies(
                 "--no-deps",
                 "--no-installer-metadata",
                 "--no-compile-bytecode",
+                "--directory",
+                project_root,
                 "--python-platform",
                 "x86_64-manylinux2014",
                 "--python",
@@ -97,10 +103,11 @@ def install_lambda_layer_dependencies(
         print(f"Error output: {e.stderr}")
 
 
-def install_lambda_layer_gdpr_obfuscator(
+def build_lambda_gdpr_obfuscator_layer(
+    project_root: str,
     target_dir: str = "build/layers/gdpr_obfuscator/python",
 ):
-    """Install the GDPR Obfuscator Lambda layer.
+    """Build the GDPR Obfuscator Lambda layer.
 
     Args:
         target_dir (str, optional): Target directory for the GDPR Obfuscator Lambda layer. Defaults to "build/layers/gdpr_obfuscator/python".
@@ -115,6 +122,8 @@ def install_lambda_layer_gdpr_obfuscator(
                 "--no-deps",
                 "--no-compile-bytecode",
                 "--no-installer-metadata",
+                "--directory",
+                project_root,
                 "--target",
                 target_dir,
                 ".",
@@ -126,48 +135,24 @@ def install_lambda_layer_gdpr_obfuscator(
         print(f"Error output: {e.stderr}")
 
 
-def zip_directory(source_dir: str, target_dir: str):
-    """Create a reproducible ZIP archive with consistent timestamps to mantain checksum integrity between generations"""
-    try:
-        zip_path = f"{target_dir}.zip"
-        source_path = Path(source_dir)
+def build_lambda_dependency_requirements(
+    project_root: str,
+    lambda_layer_deps_target_dir: str,
+    lambda_layer_gdpr_obfuscator_target_dir: str,
+):
+    requirements = generate_lambda_dependency_requirements(project_root)
 
-        fixed_timestamp = (2024, 1, 1, 0, 0, 0)
-
-        with zipfile.ZipFile(zip_path, "w", zipfile.ZIP_DEFLATED) as zipf:
-            # Walk directory and add files in sorted order for determinism
-            for file_path in sorted(source_path.rglob("*")):
-                if file_path.is_file():
-                    arcname = file_path.relative_to(source_path)
-
-                    # Create ZipInfo with fixed timestamp
-                    zinfo = zipfile.ZipInfo(str(arcname))
-                    zinfo.date_time = fixed_timestamp
-                    zinfo.compress_type = zipfile.ZIP_DEFLATED
-
-                    # Set file permissions (0644 for files)
-                    zinfo.external_attr = 0o644 << 16
-
-                    with file_path.open("rb") as f:
-                        zipf.writestr(zinfo, f.read())
-
-    except Exception as e:
-        print(f"Error zipping directory: {e}")
-
-
-def get_lambda_dependency_requirements():
-    requirements = generate_lambda_dependency_requirements()
-
-    install_lambda_layer_dependencies(
-        requirements, target_dir="build/layers/deps/python"
+    build_lambda_dependencies_layer(
+        requirements, project_root=project_root, target_dir=lambda_layer_deps_target_dir
     )
-    install_lambda_layer_gdpr_obfuscator(
-        target_dir="build/layers/gdpr_obfuscator/python"
+    build_lambda_gdpr_obfuscator_layer(
+        project_root=project_root, target_dir=lambda_layer_gdpr_obfuscator_target_dir
     )
-
-    zip_directory("build/layers/deps", "dist/gdpr_obfuscator_layer_deps")
-    zip_directory("build/layers/gdpr_obfuscator", "dist/gdpr_obfuscator_layer")
 
 
 if __name__ == "__main__":
-    get_lambda_dependency_requirements()
+    build_lambda_dependency_requirements(
+        "/Users/theorib/Development/Projects/gdpr-obfuscator/",
+        "build/layers/deps/python",
+        "build/layers/gdpr_obfuscator/python",
+    )
