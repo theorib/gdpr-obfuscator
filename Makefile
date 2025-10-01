@@ -14,35 +14,23 @@ sync: uv ## Install dependencies
 .PHONY: build-lambda-layer
 build-lambda-layer: sync ## Build AWS Lambda layer files without dependencies that are already included in the AWS Lambda environment
 	rm -rf build
-	mkdir -p build
-	uv export --frozen --no-dev --no-editable --no-hashes | \
-	grep -v "^\." | grep -v "^boto3=\|^botocore=\|^jmespath=\|^python-dateutil=\|^s3transfer=\|^six=\|^urllib3=" > build/lambda-requirements.txt
-
-	mkdir -p build/layer/python
-	uv pip install \
-			--no-installer-metadata \
-			--no-compile-bytecode \
-			--python-platform x86_64-manylinux2014 \
-			--python 3.13 \
-			--target build/layer/python \
-			-r build/lambda-requirements.txt
-	uv pip install \
-                --no-deps \
-                --no-compile-bytecode \
-                --target build/layer/python \
-				.
-	@echo "📄 Lambda layer requirements.txt created at: build/lambda-requirements.txt"
-	@echo "📁 Lambda layer folder created at: build/layer/python"
-	@echo "📏 Lambda layer unziped size: $$(du -sh build/layer/python | cut -f1)"
+	uv run python infrastructure/helpers/build_lambda_layer.py "$(CURDIR)" "build/layers/deps/python" "build/layers/gdpr_obfuscator/python"
+	@echo "📁 Lambda dependencies layer created at: build/layers/deps/python"
+	@echo "📁 Lambda GDPR Obfuscator layer created at: build/layers/gdpr_obfuscator/python"
+	@echo "📏 Dependencies layer unzipped size: $$(du -sh build/layers/deps/python | cut -f1)"
+	@echo "📏 GDPR Obfuscator layer unzipped size: $$(du -sh build/layers/gdpr_obfuscator/python | cut -f1)"
 
 .PHONY: build-lambda-layer-zip
-build-lambda-layer-zip: build-lambda-layer ## Create an AWS Lambda layer zip file without dependencies that are already included in the AWS Lambda environment
+build-lambda-layer-zip: build-lambda-layer ## Create AWS Lambda layer zip files for dependencies and GDPR obfuscator
 	mkdir -p dist
-	cd build/layer && zip -r ../../dist/gdpr-obfuscator-layer.zip .
-	@echo "📦 Lambda layer zip created at: dist/gdpr-obfuscator-layer.zip"
-	@echo "📏 Lambda layer unzipped size: $$(du -sh build/layer/python | cut -f1)"
-	@echo "🗜️  Lambda layer zipped size: $$(du -sh dist/gdpr-obfuscator-layer.zip | cut -f1)"
-	rm -rf build
+	cd build/layers/deps && zip -r ../../../dist/lambda-deps-layer.zip .
+	cd build/layers/gdpr_obfuscator && zip -r ../../../dist/lambda-gdpr-obfuscator-layer.zip .
+	@echo "📦 Lambda dependencies layer zip created at: dist/lambda-deps-layer.zip"
+	@echo "📦 Lambda GDPR obfuscator layer zip created at: dist/lambda-gdpr-obfuscator-layer.zip"
+	@echo "📏 Dependencies layer unzipped size: $$(du -sh build/layers/deps | cut -f1)"
+	@echo "📏 GDPR obfuscator layer unzipped size: $$(du -sh build/layers/gdpr_obfuscator | cut -f1)"
+	@echo "🗜️  Dependencies layer zipped size: $$(du -sh dist/lambda-deps-layer.zip | cut -f1)"
+	@echo "🗜️  GDPR obfuscator layer zipped size: $$(du -sh dist/lambda-gdpr-obfuscator-layer.zip | cut -f1)"
 
 .PHONY: test
 test:  ## Run tests
@@ -114,7 +102,7 @@ sample-infrastructure-clean-obfuscated-files: ## Cleans up any obfuscated sample
 	@echo "✅ Cleanup complete"
 
 .PHONY: sample-infrastructure-deploy
-sample-infrastructure-deploy: build-lambda-layer-zip## Deploy the sample infrastructure to AWS
+sample-infrastructure-deploy: ## Deploy the sample infrastructure to AWS
 	@echo "🚀 Deploying sample infrastructure"
 	@cd infrastructure && pulumi up --stack $(STACK_NAME) --yes
 	@echo "✅ Sample infrastructure deployed"

@@ -151,8 +151,18 @@ def build_lambda_dependency_requirements(
 
 
 if __name__ == "__main__":
+    import sys
+
+    if len(sys.argv) != 4:
+        print("Usage: python build_lambda_layer.py <project_root> <deps_target_dir> <gdpr_obfuscator_target_dir>")
+        sys.exit(1)
+
+    project_root = sys.argv[1]
+    deps_target_dir = sys.argv[2]
+    gdpr_obfuscator_target_dir = sys.argv[3]
+
     build_lambda_dependency_requirements(
-        "/Users/theorib/Development/Projects/gdpr-obfuscator/",
-        "build/layers/deps/python",
-        "build/layers/gdpr_obfuscator/python",
+        project_root,
+        deps_target_dir,
+        gdpr_obfuscator_target_dir,
     )
