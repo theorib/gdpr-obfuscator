@@ -36,6 +36,8 @@ jobs:
           uv run ruff format --check .
       - name: Test with pytest
         run: uv run pytest -vvv -rP --testdox
+      - name: Run Bandit security scan
+        run: uv run bandit -r -ll src
 
   test-pip-install:
     name: Check that pip install install (with Python ${{ matrix.python-version }}) works correctly
