@@ -106,7 +106,7 @@ This is the main function that processes CSV, JSON, and Parquet files and obfusc
 - `file_to_obfuscate` (`str`): S3 address to the file to be obfuscated. Formatted as `s3://<bucket_name>/<file_key>` (e.g., `s3://my-bucket-name/some_file_to_obfuscate.csv`)
 - `pii_fields` (`list[str]`): List of column names (or fields) that contain PII data to be obfuscated (e.g. `["full_name", "date_of_birth", "address", "phone"]`)
 - `masking_string` (`str`): String used to replace PII data (default is `"***"`)
-- `file_type` (`Literal["csv", "json", "parquet"]`): Type of file to obfuscate (default is "csv"), can be one of `csv`, `json`, or `parquet`
+- `file_type` (`Literal["csv", "json", "parquet"]`): Type of file to obfuscate, can be one of `csv`, `json`, or `parquet`, (default is `"csv"`)
 
 #### Raises
 
