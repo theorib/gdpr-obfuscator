@@ -165,6 +165,6 @@ sample-infrastructure-get-output: ## Get the obfuscated files
 
 .PHONY: profile-gdpr-obfuscator
 profile-gdpr-obfuscator: ## Run a profiling test on the GDPR Obfuscator function, make sure you have deployed the sample infrastructure
-	@uv run src/gdpr_obfuscator_profiling/gdpr_obfuscator_profiling.py
+	@PYTHONPATH=$(CURDIR) uv run src/gdpr_obfuscator_profiling/gdpr_obfuscator_profiling.py
 
 
