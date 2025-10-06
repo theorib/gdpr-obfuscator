@@ -154,7 +154,9 @@ if __name__ == "__main__":
     import sys
 
     if len(sys.argv) != 4:
-        print("Usage: python build_lambda_layer.py <project_root> <deps_target_dir> <gdpr_obfuscator_target_dir>")
+        print(
+            "Usage: python build_lambda_layer.py <project_root> <deps_target_dir> <gdpr_obfuscator_target_dir>"
+        )
         sys.exit(1)
 
     project_root = sys.argv[1]
