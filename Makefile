@@ -56,7 +56,7 @@ cov: ## Run tests with coverage
 
 .PHONY: safe
 safe: ## Run Bandit security scan
-	uv run bandit -r -lll src
+	uv run bandit -r -ll src
 
 .PHONY: checks
 checks: fix-all cov safe ## Run all checks
