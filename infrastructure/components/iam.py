@@ -1,7 +1,6 @@
 """IAM roles and policies for GDPR obfuscation"""
 
 import pulumi_aws as aws
-from pulumi import Output
 
 
 def create_lambda_logging_policy(

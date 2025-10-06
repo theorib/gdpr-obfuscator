@@ -4,7 +4,11 @@ import os
 
 import pulumi
 import pulumi_aws as aws
-from components.iam import create_lambda_role, create_lambda_s3_policies, create_lambda_logging_policy
+from components.iam import (
+    create_lambda_logging_policy,
+    create_lambda_role,
+    create_lambda_s3_policies,
+)
 from components.lambda_function import create_lambda_function
 from components.s3 import create_test_buckets, create_test_data
 
