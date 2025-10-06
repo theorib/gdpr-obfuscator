@@ -46,7 +46,7 @@ The purpose of this project is to create a general-purpose [Python](https://www.
 
 The package is designed to ingest data directly from a specified AWS S3 bucket. It returns a `bytes` object that can be easily stored back into a file on an S3 bucket or be further processed in the data pipeline. The package can be easily integrated into existing AWS services such as Lambda, Glue, Step Functions, EC2 instances, etc, being fully compatible with serverless environments.
 
-It is written in [python](https://www.python.org), it is fully tested, PEP-8 compliant, and follows best practices for security and performance.
+It is written in [python](https://www.python.org), is fully tested using [pytest](https://docs.pytest.org/en/stable/), PEP-8 compliant (linted and formatted with [ruff](https://docs.astral.sh/ruff/)), and follows best practices for security and performance (tested using [bandit](https://bandit.readthedocs.io/en/latest/index.html)).
 
 Currently the package supports ingesting and processing CSV, JSON, and Parquet files.
 
@@ -54,7 +54,19 @@ Currently the package supports ingesting and processing CSV, JSON, and Parquet f
 
 - Be comfortable with the basics of running terminal commands using a [terminal emulator](https://en.wikipedia.org/wiki/Terminal_emulator) and have a terminal emulator installed in your computer.
 - A basic understanding of [python](https://www.python.org).
-- [Python](https://www.python.org) version 3.10 or higher installed and configured in your computer. If you haven't, you can install python using [uv](#installing-uv) or following the instructions on [installing python](https://www.python.org) manually.
+- [Python](https://www.python.org) version 3.10 or higher installed and configured in your computer.
+
+  This package has been tested with Python v3.10 all the way to Python v3.13
+
+  If you are using [uv](#installing-uv), you can install python by running:
+
+  ```bash
+  uv python install
+  ```
+
+  Or by following their docs on [Installing Python](https://docs.astral.sh/uv/guides/install-python/).
+  
+  Otherwise, you can follow standard instructions on the Python official website to install it manually [installing python](https://www.python.org).
 
 ## Optional Requirements
 
@@ -87,6 +99,7 @@ On your terminal, navigate to the directory where you wish to create your python
 ```bash
 python -m venv venv
 source venv/bin/activate
+export PYTHONPATH=$(pwd)
 ```
 
 Then you can install the **GDPR Obfuscator** as a dependency:
