@@ -28,6 +28,10 @@
       - [Invalid S3 Key](#invalid-s3-key)
       - [Missing PII Fields](#missing-pii-fields)
       - [File Format Issues](#file-format-issues)
+  - [Performance](#performance)
+    - [Performance Summary](#performance-summary)
+      - [Data Processed](#data-processed)
+      - [Key Insights](#key-insights)
   - [Local Development and Testing](#local-development-and-testing)
     - [Requirements](#requirements-1)
     - [Optional Requirements](#optional-requirements-1)
@@ -39,6 +43,7 @@
       - [To deploy the sample infrastructure, follow these steps](#to-deploy-the-sample-infrastructure-follow-these-steps)
       - [Running live tests with the sample infrastructure and GDPR Obfuscator](#running-live-tests-with-the-sample-infrastructure-and-gdpr-obfuscator)
       - [Running manual tests on the sample infrastructure using the AWS management console](#running-manual-tests-on-the-sample-infrastructure-using-the-aws-management-console)
+    - [Running performance tests locally](#running-performance-tests-locally)
 
 ## Introduction
 
@@ -238,6 +243,40 @@ The GDPR Obfuscator handles common issues (see [Raises](#raises) above) and prov
 - Parquet Files must have proper Parquet structure
 - Maximum file size: 1MB for optimal performance
 
+## Performance
+
+The GDPR Obfuscator is designed to handle large files efficiently. It can easily process files larger than 1MB with thousands of rows and is optimized for performance.
+
+During local testing, the processing time for a large **1MB** csv file with **7,032 rows**, took 1.602619s.
+
+99.8% of that time was spent with network overheads, (connecting to S3 and retrieving the data).
+
+The actual time spent processing the data was only **0.003911s** (0.2% of total time).
+
+You can [run performance tests locally](#running-performance-tests-locally) if you want
+
+### Performance Summary
+
+| Metric | Full (S3 + Processing) | Mocked (Processing Only) | Difference |
+|--------|------------------------|--------------------------|------------|
+| **Execution Time** | 1.602619s | 0.003911s | 1.598708s (99.8%) |
+| **Throughput** | 4,388 rows/s | 1,797,872 rows/s | 409.74x faster |
+| **Function Calls** | 26,852 | 491 | +26,361 |
+| **Primitive Calls** | 25,113 | 489 | +24,624 |
+
+#### Data Processed
+
+- **File size**: 1.00 MB
+- **Rows**: 7,032
+- **Fields obfuscated**: 4
+- **Total fields processed**: 28,128
+
+#### Key Insights
+
+- **Network overhead**: 1.598708s (99.8% of total time)
+- **Processing time**: 0.003911s (0.2% of total time)
+- **Speedup without network**: 409.74x faster throughput
+
 ## Local Development and Testing
 
 You will need a [terminal emulator](https://en.wikipedia.org/wiki/Terminal_emulator) to run this project in a local development environment as well as [git](https://git-scm.com/downloads), [make](https://www.gnu.org/software/make/) and [uv](https://docs.astral.sh/uv/) installed.
@@ -395,3 +434,26 @@ The sample lambda, expects an event object as it's first argument and it should 
 ```
 
 Replace `<bucket-name>`,`<file-key>` and the `pii_fields` list with the values that you want (such as those from the `make sample-infrastructure-get-output` command). Or from any other bucket you may have that contains test data.
+
+### Running performance tests locally
+
+You can run performance tests locally for the `gdpr_obfuscator` function by using the make command:
+
+```bash
+make profile-gdpr-obfuscator
+```
+
+Make sure that before you do so, you have the [sample infrastructure deployed](#deploying-sample-infrastructure-into-aws)
+
+Alternatively, you can import the `gdpr_obfuscator_profiling` function and run it directly with any suitable files you may have hosted on s3:
+
+```python
+from src.gdpr_obfuscator_profiling.gdpr_obfuscator_profiling import gdpr_obfuscator_profiling
+
+gdpr_obfuscator_profiling(
+  file_to_obfuscate="s3://some-bucket/some_file.parquet",
+  pii_fields=["name", "email_address", "phone_number", "address"],
+  profiling_data_output_dir='/profile-report',
+  file_type="parquet"
+)
+```
