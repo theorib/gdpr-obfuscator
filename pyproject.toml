@@ -7,7 +7,7 @@ name = "gdpr-obfuscator"
 version = "1.0.0"
 description = "A Python library for obfuscating personally identifiable information (PII) in CSV files for GDPR compliance"
 readme = "README.md"
-requires-python = ">=3.13"
+requires-python = ">=3.9"
 authors = [{ name = "Theo Ribeiro" }]
 classifiers = [
     "Development Status :: 3 - Alpha",
