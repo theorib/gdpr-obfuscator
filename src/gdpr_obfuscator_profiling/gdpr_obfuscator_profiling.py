@@ -6,7 +6,6 @@ import os
 import subprocess
 from cProfile import Profile
 from datetime import datetime
-from pathlib import Path
 from pstats import SortKey, Stats
 from typing import List, Literal
 from unittest.mock import MagicMock, patch
