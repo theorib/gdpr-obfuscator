@@ -158,7 +158,7 @@ def get_pulumi_output():
     return json.loads(result.stdout)
 
 
-def main(
+def gdpr_obfuscator_profiling(
     file_to_obfuscate: str,
     pii_fields: List[str],
     profiling_data_output_dir: str,
@@ -216,7 +216,7 @@ def main(
     print(data)
 
 
-if __name__ == "__main__":
+def main():
     pulumi_output = get_pulumi_output()
     file_to_obfuscate = (
         f"s3://{pulumi_output['bucket_name']}/{pulumi_output['pii_data_key_large']}"
@@ -224,8 +224,12 @@ if __name__ == "__main__":
     pii_fields = ["name", "email_address", "phone_number", "address"]
     profiling_data_output_dir = "profiling/"
 
-    main(
+    gdpr_obfuscator_profiling(
         file_to_obfuscate=file_to_obfuscate,
         pii_fields=pii_fields,
         profiling_data_output_dir=profiling_data_output_dir,
     )
+
+
+if __name__ == "__main__":
+    main()
