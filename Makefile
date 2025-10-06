@@ -38,11 +38,11 @@ test:  ## Run tests
 
 .PHONY: lint
 lint:  ## Run Ruff linter
-	uv run ruff check ./src ./tests --fix
+	uv run ruff check ./src ./tests ./infrastructure --fix
 
 .PHONY: fmt
 fmt:  ## Run Ruff formatter
-	uv run ruff format --verbose ./src ./tests
+	uv run ruff format --verbose ./src ./tests ./infrastructure
 
 .PHONY: fix
 fix:  fmt lint ## Run Ruff linter and formatter
