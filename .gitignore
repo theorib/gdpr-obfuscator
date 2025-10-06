@@ -218,3 +218,5 @@ pyrightconfig.json
 
 dist
 build
+
+requirements.txt
