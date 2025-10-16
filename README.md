@@ -7,6 +7,14 @@
   - [Introduction](#introduction)
   - [Requirements](#requirements)
   - [Optional Requirements](#optional-requirements)
+  - [Configuring the AWS CLI](#configuring-the-aws-cli)
+    - [Creating an AWS Account](#creating-an-aws-account)
+    - [Installing the latest version of the AWS CLI](#installing-the-latest-version-of-the-aws-cli)
+    - [AWS CLI Authentication](#aws-cli-authentication)
+      - [Option 1: IAM User with Access Keys (for Development/Testing, not recommended for production environments)](#option-1-iam-user-with-access-keys-for-developmenttesting-not-recommended-for-production-environments)
+      - [Option 2: AWS SSO / IAM Identity Center (more complex, Recommended by AWS and the way to go for Production/Teams)](#option-2-aws-sso--iam-identity-center-more-complex-recommended-by-aws-and-the-way-to-go-for-productionteams)
+    - [Official AWS Documentation](#official-aws-documentation)
+    - [Required IAM Permissions](#required-iam-permissions)
   - [Installing GDPR Obfuscator in your Python Project](#installing-gdpr-obfuscator-in-your-python-project)
     - [Installing with uv](#installing-with-uv)
     - [Installing with pip](#installing-with-pip)
@@ -41,6 +49,7 @@
     - [Makefile commands](#makefile-commands)
     - [Project Setup](#project-setup)
     - [Deploying sample infrastructure into AWS](#deploying-sample-infrastructure-into-aws)
+      - [Required IAM Permissions for Sample Infrastructure Deployment](#required-iam-permissions-for-sample-infrastructure-deployment)
       - [To deploy the sample infrastructure, follow these steps](#to-deploy-the-sample-infrastructure-follow-these-steps)
       - [Running live tests with the sample infrastructure and GDPR Obfuscator](#running-live-tests-with-the-sample-infrastructure-and-gdpr-obfuscator)
       - [Running manual tests on the sample infrastructure using the AWS management console](#running-manual-tests-on-the-sample-infrastructure-using-the-aws-management-console)
@@ -80,13 +89,77 @@ Currently the package supports ingesting and processing CSV, JSON, and Parquet f
   - **Recommended**: Also include S3 write permissions (`s3:PutObject`) if you plan to save obfuscated results back to the same S3 bucket
 
   How you configure credentials depends on where you're running the package:
-  - **Running locally**: Configure [AWS CLI](https://aws.amazon.com/cli/) with your access keys (see [Optional Requirements](#optional-requirements) below)
+  - **Running locally**: Configure [AWS CLI](https://aws.amazon.com/cli/) with your credentials (see [Configuring the AWS CLI](#configuring-the-aws-cli) below)
   - **Running on AWS (Lambda, EC2, ECS, etc)**: Use IAM roles attached to your compute resource
 
 ## Optional Requirements
 
 - We recommend [uv](https://docs.astral.sh/uv/) as your project's package manager. It can install Python versions, create a virtual environment, and manage dependencies for you automatically.
-- [AWS CLI](https://aws.amazon.com/cli/) installed and configured with your AWS credentials. This is needed if you want to run this package locally on your computer for testing or development. Make sure your AWS CLI is configured with permissions that include S3 access to the bucket(s) you'll be working with. The AWS CLI is also required if you want to deploy the [sample Lambda infrastructure](#aws-lambda-deployment-example) included in this repository.
+- [AWS CLI](https://aws.amazon.com/cli/) installed and configured with your AWS credentials. This is needed if you want to run this package locally on your computer for testing or development. Make sure your AWS CLI is configured with permissions that include S3 access to the bucket(s) you'll be working with. The AWS CLI is also required if you want to deploy the [sample Lambda infrastructure](#aws-lambda-deployment-example) included in this repository. See [Configuring the AWS CLI](#configuring-the-aws-cli) below for setup instructions.
+
+## Configuring the AWS CLI
+
+To use the GDPR Obfuscator package locally or to [install sample infrastructure with Pulumi](#deploying-sample-infrastructure-into-aws), you will need the [AWS CLI](https://aws.amazon.com/cli/) installed and configured with credentials that have as a minimum, S3 read permissions (see [Required IAM permission](#required-iam-permissions)).
+
+Creating and configuring an AWS account and the AWS CLI are beyoud the scope of these docs but we will provide a brief overview and some useful links to help you get started.
+
+### Creating an AWS Account
+
+If you don't have an AWS account yet, you can follow [Launch Goat's excelent tutorial](https://awslaunchgoat.com/docs/first-steps/root) on creating an AWS account. This guide walks you through account creation and essential security setup including MFA (multi-factor authentication).
+
+### Installing the latest version of the AWS CLI
+
+Follow the [official documentation](https://docs.aws.amazon.com/cli/latest/userguide/getting-started-install.html) to install the latest version of the AWS CLI for your operating system.
+
+### AWS CLI Authentication
+
+There are two main approaches for authenticating the AWS CLI in your computer:
+
+#### Option 1: IAM User with Access Keys (for Development/Testing, not recommended for production environments)
+
+This is the quickest method for local development and testing. Follow this [step-by-step guide for IAM user and AWS CLI setup](https://dev.to/binat/install-and-configure-aws-cli-on-windows-1obh). Despite mentioning Windows in the title, most steps are platform-agnostic.
+
+The article covers the necesary steps for:
+
+- Installing the AWS CLI
+- Creating an IAM user with programmatic access
+- Generating access keys
+- Configuring the AWS CLI with `aws configure`
+- Testing your setup
+
+**Security Note**: Using long-lived access keys is convenient for development but is **not recommended for production environments**. Access keys can be exposed or compromised, creating security risks. For production deployments, use IAM roles (when running on AWS services like Lambda, EC2, or ECS) or SSO authentication on your AWS CLI instead.
+
+#### Option 2: AWS SSO / IAM Identity Center (more complex, Recommended by AWS and the way to go for Production/Teams)
+
+For production environments or team-based development, AWS recommends using AWS Single Sign-On (SSO) through IAM Identity Center. This provides:
+
+- Centralized identity management
+- Temporary credentials that automatically expire
+- Browser-based authentication
+- Better security and audit capabilities
+
+Follow the [AWS Launch Goat SSO setup guide](https://awslaunchgoat.com/docs/first-steps/identity) for this approach. Note that this requires setting up AWS Organizations and is more involved than the access key method.
+
+As an added tip, SSO setup signs you off periodically and the AWS CLI command to sign you back in again is:
+
+```bash
+aws sso login
+```
+
+### Official AWS Documentation
+
+For reference, AWS provides comprehensive documentation:
+
+- [AWS CLI Installation Guide](https://docs.aws.amazon.com/cli/latest/userguide/getting-started-quickstart.html)
+- [AWS CLI Configuration Guide](https://docs.aws.amazon.com/cli/latest/userguide/cli-chap-configure.html)
+
+### Required IAM Permissions
+
+Regardless of which authentication method you choose, ensure your credentials have these permissions:
+
+- **Minimum**: `s3:GetObject` for reading files from S3
+- **Recommended**: `s3:GetObject` and `s3:PutObject` if you plan to save obfuscated data back to S3
+- **For deploying sample infrastructure using Pulumi**: [Required IAM Permissions for Sample Infrastructure Deployment](#required-iam-permissions-for-sample-infrastructure-deployment)
 
 ## Installing GDPR Obfuscator in your Python Project
 
@@ -309,7 +382,7 @@ This is a good reference implementation if you're planning to use the GDPR Obfus
 ## Local Development and Testing
 
 You will need a [terminal emulator](https://en.wikipedia.org/wiki/Terminal_emulator) to run this project in a local development environment as well as [git](https://git-scm.com/downloads), [make](https://www.gnu.org/software/make/) and [uv](https://docs.astral.sh/uv/) installed.
-Additionally, to run sample infrastructure in AWS, you will need an AWS account setup and running, as well as the [AWS CLI](https://aws.amazon.com/cli/) installed and configured with your credentials. You will also need [Pulumi](https://www.pulumi.com/product/infrastructure-as-code/) installed and configured.
+Additionally, to run sample infrastructure in AWS, you will need an AWS account setup and running, as well as the [AWS CLI](https://aws.amazon.com/cli/) installed and configured with your credentials (see [Configuring the AWS CLI](#configuring-the-aws-cli) above). You will also need [Pulumi](https://www.pulumi.com/product/infrastructure-as-code/) installed and configured.
 
 Except for uv, installing these tools is beyond the scope of this project but you can find more information online or by following the outlined links.
 
@@ -326,7 +399,7 @@ The commands you will see below can be copy/pasted into your terminal emulator. 
 ### Optional Requirements for Local Development
 
 - [ruff](https://docs.astral.sh/ruff/) for code formatting and linting when developing locally and testing
-- [AWS CLI](https://aws.amazon.com/cli/) for running this package locally or for deploying sample infrastructure into an AWS Lambda function
+- [AWS CLI](https://aws.amazon.com/cli/) for running this package locally or for deploying sample infrastructure into an AWS Lambda function (see [Configuring the AWS CLI](#configuring-the-aws-cli) above)
 - [Pulumi](https://www.pulumi.com/product/infrastructure-as-code/) for deploying sample infrastructure using this package onto an AWS lambda function when developing locally and testing
 
 ### Installing uv
@@ -389,6 +462,21 @@ The current pulumi setup is ready to:
 - Configure proper IAM roles and policies following the principle of least privilege
 - Set up CloudWatch logging for monitoring and debugging
 
+#### Required IAM Permissions for Sample Infrastructure Deployment
+
+To deploy the sample infrastructure using Pulumi, your AWS CLI credentials must have permissions to create and manage the following AWS resources:
+
+- `aws:s3:Bucket` - Create and manage S3 buckets
+- `aws:s3:BucketObject` - Upload and manage objects in S3 buckets
+- `aws:iam:Role` - Create IAM roles for Lambda execution
+- `aws:iam:Policy` - Create IAM policies for resource access
+- `aws:iam:RolePolicyAttachment` - Attach policies to IAM roles
+- `aws:lambda:LayerVersion` - Create Lambda layers for dependencies
+- `aws:lambda:Function` - Create and configure Lambda functions
+- `aws:cloudwatch:LogGroup` - Create CloudWatch log groups for Lambda logging
+
+**Note**: In a production environment, you should follow the principle of least privilege and grant only the specific permissions needed. For testing and development, you may use an IAM user or role with broader permissions, but ensure you understand the security implications.
+
 #### To deploy the sample infrastructure, follow these steps
 
 Run all of the commands below from the root of your cloned repository.
@@ -398,8 +486,8 @@ Run all of the commands below from the root of your cloned repository.
     - [Cloning this repository](#cloning-this-repository)
     - [Project Setup](#project-setup)
 2. Make sure you have the [Pulumi](https://www.pulumi.com/docs/iac/download-install/) CLI installed and set up.
-3. Make sure you have the [AWS CLI](https://aws.amazon.com/cli/) installed and configured with your AWS credentials.
-4. Make sure that the user configured in the AWS CLI has the necessary permissions to create and manage resources in your AWS account.
+3. Make sure you have the [AWS CLI](https://aws.amazon.com/cli/) installed and configured with your AWS credentials (see [Configuring the AWS CLI](#configuring-the-aws-cli) above).
+4. Make sure that the credentials configured in the AWS CLI have the necessary permissions to create and manage resources in your AWS account.
 5. Setup pulumi for this project:
 
     ```bash
