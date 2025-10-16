@@ -52,27 +52,27 @@ The purpose of this project is to create a general-purpose [Python](https://www.
 
 The package is designed to ingest data directly from a specified AWS S3 bucket. It returns a `bytes` object that can be easily stored back into a file on an S3 bucket or be further processed in the data pipeline. The package can be easily integrated into existing AWS services such as Lambda, Glue, Step Functions, EC2 instances, etc, being fully compatible with serverless environments.
 
-It is written in [python](https://www.python.org), is fully tested using [pytest](https://docs.pytest.org/en/stable/), PEP-8 compliant (linted and formatted with [ruff](https://docs.astral.sh/ruff/)), and follows best practices for security and performance (tested using [bandit](https://bandit.readthedocs.io/en/latest/index.html)).
+It is written in [Python](https://www.python.org), is fully tested using [pytest](https://docs.pytest.org/en/stable/), PEP-8 compliant (linted and formatted with [ruff](https://docs.astral.sh/ruff/)), and follows best practices for security and performance (tested using [bandit](https://bandit.readthedocs.io/en/latest/index.html)).
 
 Currently the package supports ingesting and processing CSV, JSON, and Parquet files.
 
 ## Requirements
 
 - Be comfortable with the basics of running terminal commands using a [terminal emulator](https://en.wikipedia.org/wiki/Terminal_emulator) and have a terminal emulator installed in your computer.
-- A basic understanding of [python](https://www.python.org).
+- A basic understanding of [Python](https://www.python.org).
 - [Python](https://www.python.org) version 3.10 or higher installed and configured in your computer.
 
-  This package has been tested with Python v3.10 all the way to Python v3.13
+  This package has been tested with Python v3.10 through Python v3.13
 
-  If you are using [uv](#installing-uv), you can install python by running:
+  If you are using [uv](#installing-uv), you can install Python by running:
 
   ```bash
   uv python install
   ```
 
   Or by following their docs on [Installing Python](https://docs.astral.sh/uv/guides/install-python/).
-  
-  Otherwise, you can follow standard instructions on the Python official website to install it manually [installing python](https://www.python.org).
+
+  Otherwise, you can follow standard instructions on the Python official website to install it manually [installing Python](https://www.python.org).
 - An active AWS account with appropriate credentials configured. This is required for anyone using this package as it reads data directly from an S3 bucket.
 
   The required IAM permissions depend on your use case:
@@ -85,18 +85,18 @@ Currently the package supports ingesting and processing CSV, JSON, and Parquet f
 
 ## Optional Requirements
 
-- We recommend [uv](https://docs.astral.sh/uv/) as your project's package manager. It can install python versions, create a virtual environment, and manage dependencies for you with no sweat.
+- We recommend [uv](https://docs.astral.sh/uv/) as your project's package manager. It can install Python versions, create a virtual environment, and manage dependencies for you with no sweat.
 - [AWS CLI](https://aws.amazon.com/cli/) installed and configured with your AWS credentials. This is needed if you want to run this package locally on your computer for testing or development. Make sure your AWS CLI is configured with permissions that include S3 access to the bucket(s) you'll be working with. The AWS CLI is also required if you want to deploy the [sample Lambda infrastructure](#aws-lambda-deployment-example) included in this repository.
 
 ## Installing GDPR Obfuscator in your Python Project
 
 You can install and use **GDPR Obfuscator** in your project using any package manager. We recommend [uv](https://docs.astral.sh/uv/), but [pip](https://pypi.org/project/pip/) or any other modern package managers will work just as well.
 
-You will have to set up your python project first before installing this package. We provide instructions for [uv](#installing-with-uv) and [pip](#installing-with-pip).
+You will have to set up your Python project first before installing this package. We provide instructions for [uv](#installing-with-uv) and [pip](#installing-with-pip).
 
 ### Installing with [uv](https://docs.astral.sh/uv/)
 
-If you haven't already, [install uv](#installing-uv) and on your terminal, navigate to the directory where you wish to create your python project. Run the following command and follow the onscreen prompts:
+If you haven't already, [install uv](#installing-uv) and on your terminal, navigate to the directory where you wish to create your Python project. Run the following command and follow the onscreen prompts:
 
 ```bash
 uv init
@@ -110,7 +110,7 @@ uv add git+https://github.com/theorib/gdpr-obfuscator.git
 
 ### Installing with [pip](#installing-with-pip)
 
-On your terminal, navigate to the directory where you wish to create your python project and initialize your virtual environment:
+On your terminal, navigate to the directory where you wish to create your Python project and initialize your virtual environment:
 
 ```bash
 python -m venv venv
