@@ -19,7 +19,7 @@
       - [Obfuscating a CSV file](#obfuscating-a-csv-file)
       - [Obfuscating a Parquet file](#obfuscating-a-parquet-file)
       - [Obfuscating a JSON file with a custom masking string](#obfuscating-a-json-file-with-a-custom-masking-string)
-      - [Saving back to s3](#saving-back-to-s3)
+      - [Saving back to S3](#saving-back-to-s3)
     - [Notes](#notes)
   - [Error Handling](#error-handling)
     - [Common Issues and Solutions](#common-issues-and-solutions)
@@ -187,9 +187,9 @@ result = gdpr_obfuscator(
 )
 ```
 
-#### Saving back to s3
+#### Saving back to S3
 
-The result could be easily saved back to s3 using a library such as [Boto3](https://boto3.amazonaws.com/v1/documentation/api/latest/index.html):
+The result could be easily saved back to S3 using a library such as [Boto3](https://boto3.amazonaws.com/v1/documentation/api/latest/index.html):
 
 ```python
 import boto3
@@ -383,9 +383,9 @@ It demonstrates a complete AWS deployment workflow using the **GDPR Obfuscator**
 
 The current pulumi setup is ready to:
 
-- Create a sample s3 bucket
-- Load the s3 bucket with test data
-- Create a sample lambda function that can read from that s3 bucket, and use the **GDPR Obfuscator** package to obfuscate data stored in the s3 bucket, saving the processed data back to the same s3 bucket
+- Create a sample S3 bucket
+- Load the S3 bucket with test data
+- Create a sample lambda function that can read from that S3 bucket, and use the **GDPR Obfuscator** package to obfuscate data stored in the S3 bucket, saving the processed data back to the same S3 bucket
 - Configure proper IAM roles and policies following the principle of least privilege
 - Set up CloudWatch logging for monitoring and debugging
 
@@ -432,7 +432,7 @@ The following script will send an event with a large, 1MB csv test file containi
 make sample-infrastructure-run-test-large
 ```
 
-After running these scripts, you can check the output files that will have been saved to the same test buckets in the AWS management console. The newly created file keys will been suffixed with `_obfuscated` before the extension (example: `large_pii_data_obfuscated.csv`).
+After running these scripts, you can check the output files that will have been saved to the same test buckets in the AWS management console. The newly created file keys will be suffixed with `_obfuscated` before the extension (example: `large_pii_data_obfuscated.csv`).
 
 Once you are done testing and want to clean up the AWS resources that were created, you can run:
 
