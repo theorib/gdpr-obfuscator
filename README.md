@@ -34,8 +34,8 @@
       - [Key Insights](#key-insights)
   - [AWS Lambda Deployment Example](#aws-lambda-deployment-example)
   - [Local Development and Testing](#local-development-and-testing)
-    - [Requirements](#requirements-1)
-    - [Optional Requirements](#optional-requirements-1)
+    - [Requirements for Local Development](#requirements-for-local-development)
+    - [Optional Requirements for Local Development](#optional-requirements-for-local-development)
     - [Installing uv](#installing-uv)
     - [Cloning this repository](#cloning-this-repository)
     - [Makefile commands](#makefile-commands)
@@ -85,7 +85,7 @@ Currently the package supports ingesting and processing CSV, JSON, and Parquet f
 
 ## Optional Requirements
 
-- We recommend [uv](https://docs.astral.sh/uv/) as your project's package manager. It can install Python versions, create a virtual environment, and manage dependencies for you with no sweat.
+- We recommend [uv](https://docs.astral.sh/uv/) as your project's package manager. It can install Python versions, create a virtual environment, and manage dependencies for you automatically.
 - [AWS CLI](https://aws.amazon.com/cli/) installed and configured with your AWS credentials. This is needed if you want to run this package locally on your computer for testing or development. Make sure your AWS CLI is configured with permissions that include S3 access to the bucket(s) you'll be working with. The AWS CLI is also required if you want to deploy the [sample Lambda infrastructure](#aws-lambda-deployment-example) included in this repository.
 
 ## Installing GDPR Obfuscator in your Python Project
@@ -140,7 +140,7 @@ This is the main function that processes CSV, JSON, and Parquet files and obfusc
 #### Raises
 
 - `ValueError`: If an empty `file_to_obfuscate` is passed
-- `FileNotFoundError`: If the specified file doesn't exist (invalid s3 path)
+- `FileNotFoundError`: If the specified file doesn't exist (invalid S3 path)
 - `KeyError`: If any of the specified `pii_fields` are not found in the file
 - `RuntimeError`: If an unexpected S3 response error occurs
 
@@ -309,7 +309,7 @@ This is a good reference implementation if you're planning to use the GDPR Obfus
 ## Local Development and Testing
 
 You will need a [terminal emulator](https://en.wikipedia.org/wiki/Terminal_emulator) to run this project in a local development environment as well as [git](https://git-scm.com/downloads), [make](https://www.gnu.org/software/make/) and [uv](https://docs.astral.sh/uv/) installed.
-Additionally, to run sample infrastructure in AWS, you will need an AWS account setup and running, as well as the [aws cli](https://aws.amazon.com/cli/) installed and configured with your credentials. You will also need [Pulumi](https://www.pulumi.com/product/infrastructure-as-code/) installed and configured with your AWS credentials.
+Additionally, to run sample infrastructure in AWS, you will need an AWS account setup and running, as well as the [AWS CLI](https://aws.amazon.com/cli/) installed and configured with your credentials. You will also need [Pulumi](https://www.pulumi.com/product/infrastructure-as-code/) installed and configured.
 
 Except for uv, installing these tools is beyond the scope of this project but you can find more information online or by following the outlined links.
 
@@ -317,13 +317,13 @@ A terminal emulator comes builtin on MacOS and Linux, and can be easily installe
 
 The commands you will see below can be copy/pasted into your terminal emulator. After pasting each command, press `Enter` to execute it.
 
-### Requirements
+### Requirements for Local Development
 
 - [uv](https://docs.astral.sh/uv/) is the package manager used in this project.
 - [git](https://git-scm.com/downloads) to clone this repository
 - [make](https://www.gnu.org/software/make/) to run the makefile commands
 
-### Optional Requirements
+### Optional Requirements for Local Development
 
 - [ruff](https://docs.astral.sh/ruff/) for code formatting and linting when developing locally and testing
 - [AWS CLI](https://aws.amazon.com/cli/) for running this package locally or for deploying sample infrastructure into an AWS Lambda function
@@ -333,7 +333,7 @@ The commands you will see below can be copy/pasted into your terminal emulator. 
 
 uv is an extremely fast Python package and project manager, written in Rust. It is used to build and run this project.
 
-If Python is already installed on your system, uv will detect and use it without configuration. However, if you don't have python installed, uv will automatically install missing Python versions as needed — you don't need to install Python to get started.
+If Python is already installed on your system, uv will detect and use it without configuration. However, if you don't have Python installed, uv will automatically install missing Python versions as needed — you don't need to install Python to get started.
 
 On MacOS or Linux, you can install uv with `curl` using:
 
@@ -412,9 +412,9 @@ Run all of the commands below from the root of your cloned repository.
     make sample-infrastructure-deploy
     ```
 
-    This will create a sample s3 bucket, load test data, and create a sample lambda function.
+    This will create a sample S3 bucket, load test data, and create a sample lambda function.
 
-You can now login into your AWS Management Console and inspect the lambda and s3 buckets that were created as well as the sample data that was loaded into the bucket.
+You can now login into your AWS Management Console and inspect the lambda and S3 buckets that were created as well as the sample data that was loaded into the bucket.
 
 #### Running live tests with the sample infrastructure and GDPR Obfuscator
 
