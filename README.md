@@ -73,20 +73,20 @@ Currently the package supports ingesting and processing CSV, JSON, and Parquet f
   Or by following their docs on [Installing Python](https://docs.astral.sh/uv/guides/install-python/).
   
   Otherwise, you can follow standard instructions on the Python official website to install it manually [installing python](https://www.python.org).
-- An active AWS account with appropriate credentials configured. This is required for anyone using this tool as it reads data directly from an S3 bucket.
+- An active AWS account with appropriate credentials configured. This is required for anyone using this package as it reads data directly from an S3 bucket.
 
   The required IAM permissions depend on your use case:
   - **Minimum**: S3 read permissions (`s3:GetObject`) for the bucket(s) you'll be accessing
   - **Recommended**: Also include S3 write permissions (`s3:PutObject`) if you plan to save obfuscated results back to the same S3 bucket
 
-  How you configure credentials depends on where you're running the tool:
+  How you configure credentials depends on where you're running the package:
   - **Running locally**: Configure [AWS CLI](https://aws.amazon.com/cli/) with your access keys (see [Optional Requirements](#optional-requirements) below)
   - **Running on AWS (Lambda, EC2, ECS, etc)**: Use IAM roles attached to your compute resource
 
 ## Optional Requirements
 
 - We recommend [uv](https://docs.astral.sh/uv/) as your project's package manager. It can install python versions, create a virtual environment, and manage dependencies for you with no sweat.
-- [AWS CLI](https://aws.amazon.com/cli/) installed and configured with your AWS credentials. This is needed if you want to run this tool locally on your computer for testing or development. Make sure your AWS CLI is configured with permissions that include S3 access to the bucket(s) you'll be working with. The AWS CLI is also required if you want to deploy the [sample Lambda infrastructure](#aws-lambda-deployment-example) included in this repository.
+- [AWS CLI](https://aws.amazon.com/cli/) installed and configured with your AWS credentials. This is needed if you want to run this package locally on your computer for testing or development. Make sure your AWS CLI is configured with permissions that include S3 access to the bucket(s) you'll be working with. The AWS CLI is also required if you want to deploy the [sample Lambda infrastructure](#aws-lambda-deployment-example) included in this repository.
 
 ## Installing GDPR Obfuscator in your Python Project
 
@@ -292,7 +292,7 @@ You can [run performance tests locally](#running-performance-tests-locally) if y
 
 This repository includes a complete, production-ready example of deploying an AWS Lambda function that uses the GDPR Obfuscator package. It uses [Pulumi](https://www.pulumi.com/product/infrastructure-as-code/) for infrastructure as code (a Python native package and CLI tool that is a modern alternative to [Terraform](https://terraform.io)).
 
-The sample infrastructure demonstrates best practices for using this tool on an AWS production environment, including:
+The sample infrastructure demonstrates best practices for using this package on an AWS production environment, including:
 
 - **Lambda Layers architecture**: The GDPR Obfuscator package and its dependencies are deployed as separate Lambda Layers, following AWS best practices for code organization and deployment
 - **Proper IAM configuration**: Includes secure IAM roles and policies that follow the principle of least-privilege in order to give Lambda access to an S3 bucket with minimal permissions
@@ -326,8 +326,8 @@ The commands you will see below can be copy/pasted into your terminal emulator. 
 ### Optional Requirements
 
 - [ruff](https://docs.astral.sh/ruff/) for code formatting and linting when developing locally and testing
-- [aws cli](https://aws.amazon.com/cli/) for running this tool locally or for deploying sample infrastructure into an AWS Lambda function
-- [Pulumi](https://www.pulumi.com/product/infrastructure-as-code/) for deploying sample infrastructure using this tool onto an AWS lambda function when developing locally and testing
+- [AWS CLI](https://aws.amazon.com/cli/) for running this package locally or for deploying sample infrastructure into an AWS Lambda function
+- [Pulumi](https://www.pulumi.com/product/infrastructure-as-code/) for deploying sample infrastructure using this package onto an AWS lambda function when developing locally and testing
 
 ### Installing uv
 
@@ -385,7 +385,7 @@ The current pulumi setup is ready to:
 
 - Create a sample s3 bucket
 - Load the s3 bucket with test data
-- Create a sample lambda function that can read from that s3 bucket, and use the **GDPR Obfuscator** library to obfuscate data stored in the s3 bucket, saving the processed data back to the same s3 bucket
+- Create a sample lambda function that can read from that s3 bucket, and use the **GDPR Obfuscator** package to obfuscate data stored in the s3 bucket, saving the processed data back to the same s3 bucket
 - Configure proper IAM roles and policies following the principle of least privilege
 - Set up CloudWatch logging for monitoring and debugging
 
