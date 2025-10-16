@@ -99,13 +99,13 @@ Currently the package supports ingesting and processing CSV, JSON, and Parquet f
 
 ## Configuring the AWS CLI
 
-To use the GDPR Obfuscator package locally or to [install sample infrastructure with Pulumi](#deploying-sample-infrastructure-into-aws), you will need the [AWS CLI](https://aws.amazon.com/cli/) installed and configured with credentials that have as a minimum, S3 read permissions (see [Required IAM permission](#required-iam-permissions)).
+To use the GDPR Obfuscator package locally or to [install sample infrastructure with Pulumi](#deploying-sample-infrastructure-into-aws), you will need the [AWS CLI](https://aws.amazon.com/cli/) installed and configured with credentials that have as a minimum, S3 read permissions (see [Required IAM permissions](#required-iam-permissions)).
 
-Creating and configuring an AWS account and the AWS CLI are beyoud the scope of these docs but we will provide a brief overview and some useful links to help you get started.
+Creating and configuring an AWS account and the AWS CLI are beyond the scope of these docs but we will provide a brief overview and some useful links to help you get started.
 
 ### Creating an AWS Account
 
-If you don't have an AWS account yet, you can follow [Launch Goat's excelent tutorial](https://awslaunchgoat.com/docs/first-steps/root) on creating an AWS account. This guide walks you through account creation and essential security setup including MFA (multi-factor authentication).
+If you don't have an AWS account yet, you can follow [Launch Goat's excellent tutorial](https://awslaunchgoat.com/docs/first-steps/root) on creating an AWS account. This guide walks you through account creation and essential security setup including MFA (multi-factor authentication).
 
 ### Installing the latest version of the AWS CLI
 
@@ -167,7 +167,7 @@ You can install and use **GDPR Obfuscator** in your project using any package ma
 
 You will have to set up your Python project first before installing this package. We provide instructions for [uv](#installing-with-uv) and [pip](#installing-with-pip).
 
-### Installing with [uv](https://docs.astral.sh/uv/)
+### Installing with uv
 
 If you haven't already, [install uv](#installing-uv) and on your terminal, navigate to the directory where you wish to create your Python project. Run the following command and follow the onscreen prompts:
 
@@ -181,7 +181,7 @@ After you have initialized the project, add the **GDPR Obfuscator** as a depende
 uv add git+https://github.com/theorib/gdpr-obfuscator.git
 ```
 
-### Installing with [pip](#installing-with-pip)
+### Installing with pip
 
 On your terminal, navigate to the directory where you wish to create your Python project and initialize your virtual environment:
 
@@ -363,7 +363,7 @@ You can [run performance tests locally](#running-performance-tests-locally) if y
 
 ## AWS Lambda Deployment Example
 
-This repository includes a complete, production-ready example of deploying an AWS Lambda function that uses the GDPR Obfuscator package. It uses [Pulumi](https://www.pulumi.com/product/infrastructure-as-code/) for infrastructure as code (a Python native package and CLI tool that is a modern alternative to [Terraform](https://terraform.io)).
+This repository includes a complete, production-ready example of deploying an AWS Lambda function that uses the GDPR Obfuscator package. It uses [Pulumi](https://www.pulumi.com/product/infrastructure-as-code/) for infrastructure as code (a Python native package and CLI tool that is a modern alternative to [Terraform](https://developer.hashicorp.com/terraform)).
 
 The sample infrastructure demonstrates best practices for using this package on an AWS production environment, including:
 
@@ -386,7 +386,7 @@ Additionally, to run sample infrastructure in AWS, you will need an AWS account 
 
 Except for uv, installing these tools is beyond the scope of this project but you can find more information online or by following the outlined links.
 
-A terminal emulator comes builtin on MacOS and Linux, and can be easily installed on Windows using [Windows Terminal](https://docs.microsoft.com/en-us/windows/terminal/).
+A terminal emulator comes builtin on MacOS and Linux, and can be easily installed on Windows using [Windows Terminal](https://learn.microsoft.com/en-us/windows/terminal/).
 
 The commands you will see below can be copy/pasted into your terminal emulator. After pasting each command, press `Enter` to execute it.
 
