@@ -358,13 +358,13 @@ The GDPR Obfuscator raises descriptive exceptions for common issues (see [Raises
 ### Invalid S3 Bucket
 
 - **Error:** `FileNotFoundError`
-- **Error Message:** The specified key does not exist.
+- **Error Message:** The specified key does not exist
 - **Solution:** Ensure the bucket name is correct and exists
 
 ### Invalid S3 Key
 
 - **Error:** `FileNotFoundError`
-- **Error Message:** The specified key does not exist.
+- **Error Message:** The specified key does not exist
 - **Solution:** Ensure the file key is correct and exists
 
 ### Missing PII Fields
