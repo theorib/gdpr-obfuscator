@@ -2,22 +2,29 @@
 
 ## Table of Contents
 
+<details>
+<summary>Click to expand</summary>
+
 - [GDPR Obfuscator](#gdpr-obfuscator)
   - [Table of Contents](#table-of-contents)
   - [Introduction](#introduction)
+  - [Quick Start](#quick-start)
   - [Requirements](#requirements)
+    - [Installing Python](#installing-python)
+    - [AWS Account Setup](#aws-account-setup)
+    - [Terminal Basics](#terminal-basics)
   - [Optional Requirements](#optional-requirements)
   - [Configuring the AWS CLI](#configuring-the-aws-cli)
     - [Creating an AWS Account](#creating-an-aws-account)
-    - [Installing the latest version of the AWS CLI](#installing-the-latest-version-of-the-aws-cli)
-    - [AWS CLI Authentication](#aws-cli-authentication)
-      - [Option 1: IAM User with Access Keys (for Development/Testing, not recommended for production environments)](#option-1-iam-user-with-access-keys-for-developmenttesting-not-recommended-for-production-environments)
-      - [Option 2: AWS SSO / IAM Identity Center (more complex, Recommended by AWS and the way to go for Production/Teams)](#option-2-aws-sso--iam-identity-center-more-complex-recommended-by-aws-and-the-way-to-go-for-productionteams)
+    - [Installing the Latest Version of the AWS CLI](#installing-the-latest-version-of-the-aws-cli)
+    - [AWS CLI Authentication Options](#aws-cli-authentication-options)
+      - [Option 1: IAM User with Access Keys (quickest setup for Development/Testing, not recommended for production)](#option-1-iam-user-with-access-keys-quickest-setup-for-developmenttesting-not-recommended-for-production)
+      - [Option 2: AWS SSO / IAM Identity Center (most robust security focused approach, recommended for Production/Teams)](#option-2-aws-sso--iam-identity-center-most-robust-security-focused-approach-recommended-for-productionteams)
     - [Official AWS Documentation](#official-aws-documentation)
     - [Required IAM Permissions](#required-iam-permissions)
   - [Installing GDPR Obfuscator in your Python Project](#installing-gdpr-obfuscator-in-your-python-project)
-    - [Installing with uv](#installing-with-uv)
-    - [Installing with pip](#installing-with-pip)
+    - [Creating a New Project with uv](#creating-a-new-project-with-uv)
+    - [Creating a New Project with pip](#creating-a-new-project-with-pip)
   - [API Reference](#api-reference)
     - [`gdpr_obfuscator(file_to_obfuscate, pii_fields)`](#gdpr_obfuscatorfile_to_obfuscate-pii_fields)
       - [Parameters](#parameters)
@@ -30,20 +37,20 @@
       - [Saving back to S3](#saving-back-to-s3)
     - [Notes](#notes)
   - [Error Handling](#error-handling)
-    - [Common Issues and Solutions](#common-issues-and-solutions)
-      - [Malformed S3 Path](#malformed-s3-path)
-      - [Invalid S3 Bucket](#invalid-s3-bucket)
-      - [Invalid S3 Key](#invalid-s3-key)
-      - [Missing PII Fields](#missing-pii-fields)
-      - [File Format Issues](#file-format-issues)
+    - [Malformed S3 Path](#malformed-s3-path)
+    - [Invalid S3 Bucket](#invalid-s3-bucket)
+    - [Invalid S3 Key](#invalid-s3-key)
+    - [Missing PII Fields](#missing-pii-fields)
+    - [File Format Issues](#file-format-issues)
   - [Performance](#performance)
     - [Performance Summary](#performance-summary)
       - [Data Processed](#data-processed)
       - [Key Insights](#key-insights)
   - [AWS Lambda Deployment Example](#aws-lambda-deployment-example)
   - [Local Development and Testing](#local-development-and-testing)
-    - [Requirements for Local Development](#requirements-for-local-development)
-    - [Optional Requirements for Local Development](#optional-requirements-for-local-development)
+    - [Development Environment Setup](#development-environment-setup)
+    - [Required Tools](#required-tools)
+    - [Optional Tools](#optional-tools)
     - [Installing uv](#installing-uv)
     - [Cloning this repository](#cloning-this-repository)
     - [Makefile commands](#makefile-commands)
@@ -55,6 +62,8 @@
       - [Running manual tests on the sample infrastructure using the AWS management console](#running-manual-tests-on-the-sample-infrastructure-using-the-aws-management-console)
     - [Running performance tests locally](#running-performance-tests-locally)
 
+</details>
+
 ## Introduction
 
 The purpose of this project is to create a general-purpose [Python](https://www.python.org) package that can process data stored on an AWS S3 bucket, obfuscating any personally identifiable information (PII) the data may contain. The generated result is an exact copy of the original data, but with the specified data fields replaced with obfuscated values such as `***`.
@@ -65,82 +74,112 @@ It is written in [Python](https://www.python.org), is fully tested using [pytest
 
 Currently the package supports ingesting and processing CSV, JSON, and Parquet files.
 
+## Quick Start
+
+1. Install the `gdpr-obfuscator` package in your virtual environment:
+
+   ```bash
+   uv add git+https://github.com/theorib/gdpr-obfuscator.git
+   ```
+
+   or
+
+   ```bash
+   pip install git+https://github.com/theorib/gdpr-obfuscator.git
+   ```
+
+2. Configure your AWS CLI with the correct S3 permissions to allow the package to read from an S3 bucket (s3:GetObject)
+3. Use the package in your Python script:
+
+   ```python
+   from gdpr_obfuscator import gdpr_obfuscator
+
+   result_bytes = gdpr_obfuscator("s3://bucket-name/file-name.csv", ["email", "name"])
+   ```
+
+**New to Python or AWS?** Check the [detailed setup instructions](#installing-python) below.
+
 ## Requirements
 
-- Be comfortable with the basics of running terminal commands using a [terminal emulator](https://en.wikipedia.org/wiki/Terminal_emulator) and have a terminal emulator installed in your computer.
-- A basic understanding of [Python](https://www.python.org).
-- [Python](https://www.python.org) version 3.10 or higher installed and configured in your computer.
+- **Python 3.10+** (tested with v3.10 through v3.13)
+- **AWS Permissions** as a minimum, `s3:GetObject` permissions
+  - When running locally: Configure the [AWS CLI](#configuring-the-aws-cli)
+  - When running on an AWS environment (Lambda, EC2, ECS): set up the [correct IAM roles, policies and permissions](#required-iam-permissions) for the environment you are using
 
-  This package has been tested with Python v3.10 through Python v3.13
+<details>
+<summary><b>📖 New to Python or AWS? Click for detailed setup instructions</b></summary>
 
-  If you are using [uv](#installing-uv), you can install Python by running:
+### Installing Python
 
-  ```bash
-  uv python install
-  ```
+This package requires Python version 3.10 or higher installed and configured on your computer.
 
-  Or by following their docs on [Installing Python](https://docs.astral.sh/uv/guides/install-python/).
+If you are using [uv](#installing-uv), you can install Python by running:
 
-  Otherwise, you can follow standard instructions on the Python official website to install it manually [installing Python](https://www.python.org).
-- An active AWS account with appropriate credentials configured. This is required for anyone using this package as it reads data directly from an S3 bucket.
+```bash
+uv python install
+```
 
-  The required IAM permissions depend on your use case:
-  - **Minimum**: S3 read permissions (`s3:GetObject`) for the bucket(s) you'll be accessing
-  - **Recommended**: Also include S3 write permissions (`s3:PutObject`) if you plan to save obfuscated results back to the same S3 bucket
+Or by following their docs on [Installing Python](https://docs.astral.sh/uv/guides/install-python/).
 
-  How you configure credentials depends on where you're running the package:
-  - **Running locally**: Configure [AWS CLI](https://aws.amazon.com/cli/) with your credentials (see [Configuring the AWS CLI](#configuring-the-aws-cli) below)
-  - **Running on AWS (Lambda, EC2, ECS, etc)**: Use IAM roles attached to your compute resource
+Otherwise, you can follow standard instructions on the [Python official website](https://www.python.org) to install Python manually.
+
+### AWS Account Setup
+
+You'll need an active AWS account with the right permissions and credentials configured. This is required for anyone using this package as it reads data directly from an S3 bucket.
+
+The required AWS IAM permissions depend on your use case:
+
+- **Minimum**: S3 read permissions (`s3:GetObject`) for the bucket(s) you'll be accessing
+- **Optional**: Also include S3 write permissions (`s3:PutObject`) if you plan to save obfuscated results back to the same S3 bucket
+
+How you configure credentials and permissions depends on where you're running the package:
+
+- **Running locally**: Configure the [AWS CLI](https://aws.amazon.com/cli/) with your credentials (see [Configuring the AWS CLI](#configuring-the-aws-cli) below)
+- **Running on an AWS environment (Lambda, EC2, ECS, etc)**: Use IAM roles attached to your compute resource
+
+### Terminal Basics
+
+You'll need to be comfortable with the basics of running terminal commands using a [terminal emulator](https://en.wikipedia.org/wiki/Terminal_emulator). A terminal emulator comes built-in on MacOS and Linux, and can be easily installed on Windows using [Windows Terminal](https://learn.microsoft.com/en-us/windows/terminal/).
+
+</details>
 
 ## Optional Requirements
 
 - We recommend [uv](https://docs.astral.sh/uv/) as your project's package manager. It can install Python versions, create a virtual environment, and manage dependencies for you automatically.
-- [AWS CLI](https://aws.amazon.com/cli/) installed and configured with your AWS credentials. This is needed if you want to run this package locally on your computer for testing or development. Make sure your AWS CLI is configured with permissions that include S3 access to the bucket(s) you'll be working with. The AWS CLI is also required if you want to deploy the [sample Lambda infrastructure](#aws-lambda-deployment-example) included in this repository. See [Configuring the AWS CLI](#configuring-the-aws-cli) below for setup instructions.
+- [AWS CLI](https://aws.amazon.com/cli/) has to be installed and configured with your AWS credentials if you want to run this package locally and for deploying the [sample Lambda infrastructure](#aws-lambda-deployment-example) included in this repository. Make sure your AWS CLI is configured with the [necessary permissions](#required-iam-permissions-for-sample-infrastructure-deployment).
 
 ## Configuring the AWS CLI
 
-To use the GDPR Obfuscator package locally or to [install sample infrastructure with Pulumi](#deploying-sample-infrastructure-into-aws), you will need the [AWS CLI](https://aws.amazon.com/cli/) installed and configured with credentials that have as a minimum, S3 read permissions (see [Required IAM permissions](#required-iam-permissions)).
+To use the GDPR Obfuscator package locally, you need the [AWS CLI](https://aws.amazon.com/cli/) installed and configured with credentials that have as a minimum S3 read permissions (`s3:GetObject`) for the bucket you will be accessing.
 
-Creating and configuring an AWS account and the AWS CLI are beyond the scope of these docs but we will provide a brief overview and some useful links to help you get started.
+<details>
+<summary><b>📖 AWS CLI Setup Guide (click to expand)</b></summary>
 
 ### Creating an AWS Account
 
-If you don't have an AWS account yet, you can follow [Launch Goat's excellent tutorial](https://awslaunchgoat.com/docs/first-steps/root) on creating an AWS account. This guide walks you through account creation and essential security setup including MFA (multi-factor authentication).
+If you don't have an AWS account yet, you can follow [Launch Goat's excellent tutorial](https://awslaunchgoat.com/docs/first-steps/root) on creating an AWS account. This guide will walk you through AWS account creation and security setup.
 
-### Installing the latest version of the AWS CLI
+### Installing the Latest Version of the AWS CLI
 
 Follow the [official documentation](https://docs.aws.amazon.com/cli/latest/userguide/getting-started-install.html) to install the latest version of the AWS CLI for your operating system.
 
-### AWS CLI Authentication
+### AWS CLI Authentication Options
 
-There are two main approaches for authenticating the AWS CLI in your computer:
+There are two main approaches for authenticating the AWS CLI (AWS CLI credentials):
 
-#### Option 1: IAM User with Access Keys (for Development/Testing, not recommended for production environments)
+#### Option 1: IAM User with Access Keys (quickest setup for Development/Testing, not recommended for production)
 
 This is the quickest method for local development and testing. Follow this [step-by-step guide for IAM user and AWS CLI setup](https://dev.to/binat/install-and-configure-aws-cli-on-windows-1obh). Despite mentioning Windows in the title, most steps are platform-agnostic.
 
-The article covers the necesary steps for:
+**Security Note**: Using long-lived access keys with broad permissions is convenient for development but is **not recommended for production environments**. Access keys can be exposed or compromised. For production deployments, use IAM roles (when running on AWS services like Lambda, EC2, or ECS) or [SSO authentication](#option-2-aws-sso--iam-identity-center-most-robust-security-focused-approach-recommended-for-productionteams).
 
-- Installing the AWS CLI
-- Creating an IAM user with programmatic access
-- Generating access keys
-- Configuring the AWS CLI with `aws configure`
-- Testing your setup
+#### Option 2: AWS SSO / IAM Identity Center (most robust security focused approach, recommended for Production/Teams)
 
-**Security Note**: Using long-lived access keys is convenient for development but is **not recommended for production environments**. Access keys can be exposed or compromised, creating security risks. For production deployments, use IAM roles (when running on AWS services like Lambda, EC2, or ECS) or SSO authentication on your AWS CLI instead.
+For production environments or team-based development, AWS recommends using AWS Single Sign-On (SSO) authentication through the IAM Identity Center.
 
-#### Option 2: AWS SSO / IAM Identity Center (more complex, Recommended by AWS and the way to go for Production/Teams)
+Follow the [AWS Launch Goat SSO setup guide](https://awslaunchgoat.com/docs/first-steps/identity) for a good step by step guide to this approach. Note that this requires setting up AWS Organizations and is more involved than the access key method.
 
-For production environments or team-based development, AWS recommends using AWS Single Sign-On (SSO) through IAM Identity Center. This provides:
-
-- Centralized identity management
-- Temporary credentials that automatically expire
-- Browser-based authentication
-- Better security and audit capabilities
-
-Follow the [AWS Launch Goat SSO setup guide](https://awslaunchgoat.com/docs/first-steps/identity) for this approach. Note that this requires setting up AWS Organizations and is more involved than the access key method.
-
-As an added tip, SSO setup signs you off periodically and the AWS CLI command to sign you back in again is:
+SSO authentication on the AWS CLI signs you off periodically. To sign back in, run:
 
 ```bash
 aws sso login
@@ -155,35 +194,48 @@ For reference, AWS provides comprehensive documentation:
 
 ### Required IAM Permissions
 
-Regardless of which authentication method you choose, ensure your credentials have these permissions:
+Ensure your credentials have these permissions:
 
-- **Minimum**: `s3:GetObject` for reading files from S3
-- **Recommended**: `s3:GetObject` and `s3:PutObject` if you plan to save obfuscated data back to S3
-- **For deploying sample infrastructure using Pulumi**: [Required IAM Permissions for Sample Infrastructure Deployment](#required-iam-permissions-for-sample-infrastructure-deployment)
+- **Minimum**: `s3:GetObject` for reading files from the S3 bucket you will be accessing
+- **Optional**: `s3:GetObject` and `s3:PutObject` if you plan to save obfuscated data back to S3
+- **For deploying sample infrastructure**: See the [required IAM Permissions for Sample Infrastructure Deployment](#required-iam-permissions-for-sample-infrastructure-deployment)
+
+</details>
 
 ## Installing GDPR Obfuscator in your Python Project
 
-You can install and use **GDPR Obfuscator** in your project using any package manager. We recommend [uv](https://docs.astral.sh/uv/), but [pip](https://pypi.org/project/pip/) or any other modern package managers will work just as well.
-
-You will have to set up your Python project first before installing this package. We provide instructions for [uv](#installing-with-uv) and [pip](#installing-with-pip).
-
-### Installing with uv
-
-If you haven't already, [install uv](#installing-uv) and on your terminal, navigate to the directory where you wish to create your Python project. Run the following command and follow the onscreen prompts:
-
-```bash
-uv init
-```
-
-After you have initialized the project, add the **GDPR Obfuscator** as a dependency:
+Install with [uv](https://docs.astral.sh/uv/) (recommended):
 
 ```bash
 uv add git+https://github.com/theorib/gdpr-obfuscator.git
 ```
 
-### Installing with pip
+Or with [pip](https://pypi.org/project/pip/):
 
-On your terminal, navigate to the directory where you wish to create your Python project and initialize your virtual environment:
+```bash
+pip install git+https://github.com/theorib/gdpr-obfuscator.git
+```
+
+<details>
+<summary><b>📖 Setting up a new Python project? Click here for detailed instructions</b></summary>
+
+### Creating a New Project with uv
+
+If you haven't already, [install uv](#installing-uv). Then navigate to the directory where you wish to create your Python project and run:
+
+```bash
+uv init
+```
+
+Follow the onscreen prompts to initialize the project, then install the **GDPR Obfuscator** package as a dependency:
+
+```bash
+uv add git+https://github.com/theorib/gdpr-obfuscator.git
+```
+
+### Creating a New Project with pip
+
+Navigate to the directory where you wish to create your Python project and initialize your virtual environment:
 
 ```bash
 python -m venv venv
@@ -191,11 +243,13 @@ source venv/bin/activate
 export PYTHONPATH=$(pwd)
 ```
 
-Then you can install the **GDPR Obfuscator** as a dependency:
+Then install the **GDPR Obfuscator** package as a dependency:
 
 ```bash
 pip install git+https://github.com/theorib/gdpr-obfuscator.git
 ```
+
+</details>
 
 ## API Reference
 
@@ -289,37 +343,38 @@ response = s3_client.put_object(
 
 ## Error Handling
 
-The GDPR Obfuscator handles common issues (see [Raises](#raises) above) and provides clear error messages.
+The GDPR Obfuscator raises descriptive exceptions for common issues (see [Raises](#raises) above). Error messages guide you to the solution.
 
-### Common Issues and Solutions
+<details>
+<summary><b>📖 Common Issues and Solutions (click to expand)</b></summary>
 
-#### Malformed S3 Path
+### Malformed S3 Path
 
 - **Error:** `FileNotFoundError`
 - **Error Message:** Invalid S3 path: Missing or malformed "s3://" prefix
 - **Correct format:** `gdpr_obfuscator("s3://bucket-name/file.csv", ["field_1", "field_2"])`
 - **Incorrect:** `gdpr_obfuscator("bucket/file.csv", ["field_1", "field_2"])`
 
-#### Invalid S3 Bucket
+### Invalid S3 Bucket
 
 - **Error:** `FileNotFoundError`
 - **Error Message:** The specified key does not exist.
 - **Solution:** Ensure the bucket name is correct and exists
 
-#### Invalid S3 Key
+### Invalid S3 Key
 
 - **Error:** `FileNotFoundError`
 - **Error Message:** The specified key does not exist.
 - **Solution:** Ensure the file key is correct and exists
 
-#### Missing PII Fields
+### Missing PII Fields
 
 - **Error:** `KeyError`
 - **Error Message:** `PII fields not found: ["Email"]`
 - **Solution:** Check your CSV headers match the `pii_fields` exactly
 - **Case-sensitive:** `"Email"` ≠ `"email"`
 
-#### File Format Issues
+### File Format Issues
 
 - Only CSV, JSON, and Parquet files are currently supported
 - CSV Files must have proper CSV headers in the first row
@@ -327,17 +382,19 @@ The GDPR Obfuscator handles common issues (see [Raises](#raises) above) and prov
 - Parquet Files must have proper Parquet structure
 - Maximum file size: 1MB for optimal performance
 
+</details>
+
 ## Performance
 
 The GDPR Obfuscator is designed to handle large files efficiently. It can easily process files larger than 1MB with thousands of rows and is optimized for performance.
 
 During local testing, the processing time for a large **1MB** csv file with **7,032 rows**, took 1.602619s.
 
-99.8% of that time was spent with network overheads, (connecting to S3 and retrieving the data).
+99.8% of that time was spent on network overheads, (connecting to S3 and retrieving the data).
 
 The actual time spent processing the data was only **0.003911s** (0.2% of total time).
 
-You can [run performance tests locally](#running-performance-tests-locally) if you want
+You can [run performance tests locally](#running-performance-tests-locally) if you want.
 
 ### Performance Summary
 
@@ -359,72 +416,79 @@ You can [run performance tests locally](#running-performance-tests-locally) if y
 
 - **Network overhead**: 1.598708s (99.8% of total time)
 - **Processing time**: 0.003911s (0.2% of total time)
-- **Speedup without network**: 409.74x faster throughput
+- **Speed increase without network calls**: 409.74x faster throughput
 
 ## AWS Lambda Deployment Example
 
-This repository includes a complete, production-ready example of deploying an AWS Lambda function that uses the GDPR Obfuscator package. It uses [Pulumi](https://www.pulumi.com/product/infrastructure-as-code/) for infrastructure as code (a Python native package and CLI tool that is a modern alternative to [Terraform](https://developer.hashicorp.com/terraform)).
+This repository includes a complete, production-ready example of deploying an AWS Lambda function that uses the GDPR Obfuscator package. It uses [Pulumi](https://www.pulumi.com/product/infrastructure-as-code/) for infrastructure as code. Pulumi is a modern alternative to [Terraform](https://developer.hashicorp.com/terraform) that allows you to write infrastructure code in your own language (Python in this case).
 
-The sample infrastructure demonstrates best practices for using this package on an AWS production environment, including:
+The sample infrastructure shows best practices for using this package on an AWS production environment, including:
 
-- **Lambda Layers architecture**: The GDPR Obfuscator package and its dependencies are deployed as separate Lambda Layers, following AWS best practices for code organization and deployment
-- **Proper IAM configuration**: Includes secure IAM roles and policies that follow the principle of least-privilege in order to give Lambda access to an S3 bucket with minimal permissions
+- **Lambda Layers architecture**: The GDPR Obfuscator package and its dependencies are deployed as separate Lambda Layers, following AWS best practices for code organization and deployment efficiency (since changing the lambda source code does not require new layer dependency updates)
+- **Proper IAM configuration**: Includes secure IAM roles and policies that follow the principle of least-privilege in order to give the  Lambda access to an S3 bucket with minimal permissions
 - **S3 integration**: Sample S3 bucket with test data to help you get started quickly
-- **CloudWatch logging**: Configured with JSON formatted logs for easy monitoring and debugging
+- **CloudWatch logging**: Configured with JSON formatted logs for monitoring and debugging
 - **Infrastructure as Code**: Everything is defined in Pulumi, making it easy to deploy, modify, and tear down
 
-The Lambda function can be triggered manually or integrated with EventBridge, Step Functions, or other AWS services to create automated data obfuscation pipelines.
+The Lambda function can be triggered manually, via the [included make script](#makefile-commands) or integrated with EventBridge, Step Functions, or other AWS services to create automated data obfuscation pipelines.
 
 You can find detailed step-by-step instructions for deploying and testing the sample infrastructure in the [Deploying sample infrastructure into AWS](#deploying-sample-infrastructure-into-aws) section below.
 
-This is a good reference implementation if you're planning to use the GDPR Obfuscator in your own AWS environment.
+It is a reference implementation if you're planning to use the GDPR Obfuscator in your own AWS environment.
 
 ## Local Development and Testing
 
-You will need a [terminal emulator](https://en.wikipedia.org/wiki/Terminal_emulator) to run this project in a local development environment as well as [git](https://git-scm.com/downloads), [make](https://www.gnu.org/software/make/) and [uv](https://docs.astral.sh/uv/) installed.
-Additionally, to run sample infrastructure in AWS, you will need an AWS account setup and running, as well as the [AWS CLI](https://aws.amazon.com/cli/) installed and configured with your credentials (see [Configuring the AWS CLI](#configuring-the-aws-cli) above). You will also need [Pulumi](https://www.pulumi.com/product/infrastructure-as-code/) installed and configured.
+<details>
+<summary><b>📖 Getting started with local development (click to expand)</b></summary>
 
-Except for uv, installing these tools is beyond the scope of this project but you can find more information online or by following the outlined links.
+### Development Environment Setup
 
-A terminal emulator comes builtin on MacOS and Linux, and can be easily installed on Windows using [Windows Terminal](https://learn.microsoft.com/en-us/windows/terminal/).
+You'll need a [terminal emulator](#terminal-basics) to run this project in a local development environment.
 
-The commands you will see below can be copy/pasted into your terminal emulator. After pasting each command, press `Enter` to execute it.
+The commands you'll see below can be copy/pasted into your terminal. After pasting each command, press `Enter` to execute it.
 
-### Requirements for Local Development
+### Required Tools
 
-- [uv](https://docs.astral.sh/uv/) is the package manager used in this project.
-- [git](https://git-scm.com/downloads) to clone this repository
-- [make](https://www.gnu.org/software/make/) to run the makefile commands
+- **[uv](https://docs.astral.sh/uv/)** - Package manager used in this project (see [Installing uv](#installing-uv))
+- **[git](https://git-scm.com/downloads)** - To clone this repository
+- **[make](https://www.gnu.org/software/make/)** - To run makefile commands
 
-### Optional Requirements for Local Development
+### Optional Tools
 
-- [ruff](https://docs.astral.sh/ruff/) for code formatting and linting when developing locally and testing
-- [AWS CLI](https://aws.amazon.com/cli/) for running this package locally or for deploying sample infrastructure into an AWS Lambda function (see [Configuring the AWS CLI](#configuring-the-aws-cli) above)
-- [Pulumi](https://www.pulumi.com/product/infrastructure-as-code/) for deploying sample infrastructure using this package onto an AWS lambda function when developing locally and testing
+- **[ruff](https://docs.astral.sh/ruff/)** - For code formatting and linting
+- **[AWS CLI](https://aws.amazon.com/cli/)** - For running this package locally or deploying sample infrastructure (see [Configuring the AWS CLI](#configuring-the-aws-cli))
+- **[Pulumi](https://www.pulumi.com/product/infrastructure-as-code/)** - For deploying sample infrastructure to AWS Lambda
+
+</details>
 
 ### Installing uv
+
+<details>
+<summary><b>📖 How to install uv (click to expand)</b></summary>
 
 uv is an extremely fast Python package and project manager, written in Rust. It is used to build and run this project.
 
 If Python is already installed on your system, uv will detect and use it without configuration. However, if you don't have Python installed, uv will automatically install missing Python versions as needed — you don't need to install Python to get started.
 
-On MacOS or Linux, you can install uv with `curl` using:
+**On MacOS or Linux:**
 
 ```bash
 curl -LsSf https://astral.sh/uv/install.sh | sh
 ```
 
-On windows, run:
+**On Windows:**
 
 ```bash
 powershell -ExecutionPolicy ByPass -c "irm https://astral.sh/uv/install.ps1 | iex"
 ```
 
-If you are running any different setup or are having issues installing uv, please refer to the [uv documentation](https://docs.astral.sh/uv/getting-started/installation/) for more information.
+For other setups or troubleshooting, please refer to the [official uv documentation](https://docs.astral.sh/uv/getting-started/installation/).
+
+</details>
 
 ### Cloning this repository
 
-On your terminal, navigate to the directory where you want to install this project and clone this repository to your local machine using the following command:
+On your terminal, navigate to the directory where you want to add this project to and clone this repository using the following command:
 
 ```bash
 git clone https://github.com/theorib/gdpr-obfuscator
@@ -432,11 +496,20 @@ git clone https://github.com/theorib/gdpr-obfuscator
 
 ### Makefile commands
 
-We provide a series of Makefile commands to help you navigate this project. You can get a complete list of commands with a description of what they do by running:
+Run `make help` to see all available commands.
+
+<details>
+<summary><b>📖 About Makefile commands (click to expand)</b></summary>
+
+We provide a series of Makefile commands to help you navigate this project. You can get a complete list of commands with descriptions by running:
 
 ```bash
 make help
 ```
+
+This will display all available commands including setup, testing, linting, formatting, and deployment operations.
+
+</details>
 
 ### Project Setup
 
@@ -458,8 +531,8 @@ The current pulumi setup is ready to:
 
 - Create a sample S3 bucket
 - Load the S3 bucket with test data
-- Create a sample lambda function that can read from that S3 bucket, and use the **GDPR Obfuscator** package to obfuscate data stored in the S3 bucket, saving the processed data back to the same S3 bucket
-- Configure proper IAM roles and policies following the principle of least privilege
+- Create a sample lambda function that can read from that S3 bucket using the **GDPR Obfuscator** package to obfuscate data stored in the S3 bucket, saving the processed data back to the same bucket
+- Configure the necessarys IAM roles and policies following the principle of least privilege
 - Set up CloudWatch logging for monitoring and debugging
 
 #### Required IAM Permissions for Sample Infrastructure Deployment
@@ -475,7 +548,7 @@ To deploy the sample infrastructure using Pulumi, your AWS CLI credentials must 
 - `aws:lambda:Function` - Create and configure Lambda functions
 - `aws:cloudwatch:LogGroup` - Create CloudWatch log groups for Lambda logging
 
-**Note**: In a production environment, you should follow the principle of least privilege and grant only the specific permissions needed. For testing and development, you may use an IAM user or role with broader permissions, but ensure you understand the security implications.
+**Note**: In production environments, you should always follow the principle of least privilege and grant only the specific permissions needed. For testing and development, you may use an IAM user or role with a broader permission set, but ensure you understand the security implications.
 
 #### To deploy the sample infrastructure, follow these steps
 
@@ -485,9 +558,9 @@ Run all of the commands below from the root of your cloned repository.
     - [Installing uv](#installing-uv)
     - [Cloning this repository](#cloning-this-repository)
     - [Project Setup](#project-setup)
-2. Make sure you have the [Pulumi](https://www.pulumi.com/docs/iac/download-install/) CLI installed and set up.
-3. Make sure you have the [AWS CLI](https://aws.amazon.com/cli/) installed and configured with your AWS credentials (see [Configuring the AWS CLI](#configuring-the-aws-cli) above).
-4. Make sure that the credentials configured in the AWS CLI have the necessary permissions to create and manage resources in your AWS account.
+2. Make sure you have the [Pulumi](https://www.pulumi.com/docs/iac/download-install/) CLI installed and set up
+3. Make sure you have the [AWS CLI](https://aws.amazon.com/cli/) installed and configured with your AWS credentials (see [Configuring the AWS CLI](#configuring-the-aws-cli))
+4. Make sure that the credentials configured in the AWS CLI have the necessary permissions to create and manage resources in your AWS account
 5. Setup pulumi for this project:
 
     ```bash
@@ -508,7 +581,7 @@ You can now login into your AWS Management Console and inspect the lambda and S3
 
 For convenience, we have provided a set of make scripts that will run the lambda using the sample test files.
 
-The following command will send an event to the lambda function using a small sample test file.
+The following command will send an event to the Lambda using a small sample test file.
 
 ```bash
 make sample-infrastructure-run-test
@@ -520,7 +593,7 @@ The following script will send an event with a large, 1MB csv test file containi
 make sample-infrastructure-run-test-large
 ```
 
-After running these scripts, you can check the output files that will have been saved to the same test buckets in the AWS management console. The newly created file keys will be suffixed with `_obfuscated` before the extension (example: `large_pii_data_obfuscated.csv`).
+After running these scripts, you can check the output files that will have been saved to the same test bucket in the AWS management console. The newly created file keys will have been suffixed with `_obfuscated` before the extension (example: from `large_pii_data.csv` to `large_pii_data_obfuscated.csv`).
 
 Once you are done testing and want to clean up the AWS resources that were created, you can run:
 
@@ -560,7 +633,7 @@ Replace `<bucket-name>`,`<file-key>` and the `pii_fields` list with the values t
 
 ### Running performance tests locally
 
-You can run performance tests locally for the `gdpr_obfuscator` function by using the make command:
+This repository includes a performancy profiling scrip which you can run locally by using the following make command:
 
 ```bash
 make profile-gdpr-obfuscator
