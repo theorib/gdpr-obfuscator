@@ -97,7 +97,6 @@ def generate_markdown_performance_report(
 ### Key Insights
 - **Network overhead**: {network_overhead:.6f}s ({network_overhead_pct:.1f}% of total time)
 - **Processing time**: {mocked_time:.6f}s ({processing_time_pct:.1f}% of total time)
-- **Speedup without network**: {mocked_throughput / full_throughput:.2f}x faster throughput
 """
 
     report = f"""# GDPR Obfuscator Profiling Report

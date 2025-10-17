@@ -416,7 +416,6 @@ You can [run performance tests locally](#running-performance-tests-locally) if y
 
 - **Network overhead**: 1.598708s (99.8% of total time)
 - **Processing time**: 0.003911s (0.2% of total time)
-- **Speed increase without network calls**: 409.74x faster throughput
 
 ## AWS Lambda Deployment Example
 
