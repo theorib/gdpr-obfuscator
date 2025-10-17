@@ -66,9 +66,9 @@
 
 ## Introduction
 
-The purpose of this project is to create a general-purpose [Python](https://www.python.org) package that can process data stored on an AWS S3 bucket, obfuscating any personally identifiable information (PII) the data may contain. The generated result is an exact copy of the original data, but with the specified data fields replaced with obfuscated values such as `***`.
+The purpose of this project is to create a general-purpose [Python](https://www.python.org) package that can process data stored on an [AWS S3 bucket](https://docs.aws.amazon.com/AmazonS3/latest/userguide/Welcome.html), obfuscating any personally identifiable information (PII) the data may contain. The generated result is an exact copy of the original data except for the specified data fields that are replaced with obfuscated values such as `***`.
 
-The package is designed to ingest data directly from a specified AWS S3 bucket. It returns a `bytes` object that can be easily stored back into a file on an S3 bucket or be further processed in the data pipeline. The package can be easily integrated into existing AWS services such as Lambda, Glue, Step Functions, EC2 instances, etc, being fully compatible with serverless environments.
+The package is designed to ingest data directly from a specified AWS S3 bucket. It returns a `bytes` object that can be easily stored back into a S3 or be further processed in the data pipeline. The package can be easily integrated into existing AWS services such as Lambda, Glue, Step Functions, EC2 instances, etc, being fully compatible with serverless environments.
 
 It is written in [Python](https://www.python.org), is fully tested using [pytest](https://docs.pytest.org/en/stable/), PEP-8 compliant (linted and formatted with [ruff](https://docs.astral.sh/ruff/)), and follows best practices for security and performance (tested using [bandit](https://bandit.readthedocs.io/en/latest/index.html)).
 
@@ -388,7 +388,7 @@ The GDPR Obfuscator raises descriptive exceptions for common issues (see [Raises
 
 The GDPR Obfuscator is designed to handle large files efficiently. It can easily process files larger than 1MB with thousands of rows and is optimized for performance.
 
-During local testing, the processing time for a large **1MB** csv file with **7,032 rows**, took 1.602619s.
+During local testing, the processing time for a large **1MB** CSV file with **7,032 rows**, took 1.602619s.
 
 99.8% of that time was spent on network overheads, (connecting to S3 and retrieving the data).
 
@@ -587,7 +587,7 @@ The following command will send an event to the Lambda using a small sample test
 make sample-infrastructure-run-test
 ```
 
-The following script will send an event with a large, 1MB csv test file containing 7031 data rows.
+The following script will send an event with a large, 1MB CSV test file containing 7031 data rows.
 
 ```bash
 make sample-infrastructure-run-test-large
@@ -609,7 +609,7 @@ You can also manually test the lambda by giving it a test event of your choosing
 make sample-infrastructure-get-output
 ```
 
-The csv columns included in those files are the following. You can pick and choose any combination of them to obfuscate:
+The CSV columns included in those files are the following. You can pick and choose any combination of them to obfuscate:
 
 ```python
 ["id", "name", "email_address", "phone_number", "date_of_birth", "address", "salary", "department", "hire_date", "project_code", "status", "region"]
