@@ -18,8 +18,8 @@
     - [Creating an AWS Account](#creating-an-aws-account)
     - [Installing the Latest Version of the AWS CLI](#installing-the-latest-version-of-the-aws-cli)
     - [AWS CLI Authentication Options](#aws-cli-authentication-options)
-      - [Option 1: IAM User with Access Keys (quickest setup for Development/Testing, not recommended for production)](#option-1-iam-user-with-access-keys-quickest-setup-for-developmenttesting-not-recommended-for-production)
-      - [Option 2: AWS SSO / IAM Identity Center (most robust security focused approach, recommended for Production/Teams)](#option-2-aws-sso--iam-identity-center-most-robust-security-focused-approach-recommended-for-productionteams)
+      - [Option 1: IAM User with Access Keys (quickest setup for development/testing, not recommended for production)](#option-1-iam-user-with-access-keys-quickest-setup-for-developmenttesting-not-recommended-for-production)
+      - [Option 2: AWS SSO / IAM Identity Center (most robust security-focused approach, recommended for Production/Teams)](#option-2-aws-sso--iam-identity-center-most-robust-security-focused-approach-recommended-for-productionteams)
     - [Official AWS Documentation](#official-aws-documentation)
     - [Required IAM Permissions](#required-iam-permissions)
   - [Installing GDPR Obfuscator in your Python Project](#installing-gdpr-obfuscator-in-your-python-project)
@@ -88,7 +88,7 @@ Currently the package supports ingesting and processing CSV, JSON, and Parquet f
    pip install git+https://github.com/theorib/gdpr-obfuscator.git
    ```
 
-2. Configure your AWS CLI with the correct S3 permissions to allow the package to read from an S3 bucket (s3:GetObject)
+2. Configure your AWS CLI with the correct S3 permissions to allow the package to read from an S3 bucket (`s3:GetObject`). See [Configuring the AWS CLI](#configuring-the-aws-cli) for detailed setup instructions.
 3. Use the package in your Python script:
 
    ```python
@@ -146,7 +146,7 @@ You'll need to be comfortable with the basics of running terminal commands using
 ## Optional Requirements
 
 - We recommend [uv](https://docs.astral.sh/uv/) as your project's package manager. It can install Python versions, create a virtual environment, and manage dependencies for you automatically.
-- [AWS CLI](https://aws.amazon.com/cli/) has to be installed and configured with your AWS credentials if you want to run this package locally and for deploying the [sample Lambda infrastructure](#aws-lambda-deployment-example) included in this repository. Make sure your AWS CLI is configured with the [necessary permissions](#required-iam-permissions-for-sample-infrastructure-deployment).
+- [AWS CLI](https://aws.amazon.com/cli/) must be installed and configured with your AWS credentials if you want to run this package locally and for deploying the [sample Lambda infrastructure](#aws-lambda-deployment-example) included in this repository. Make sure your AWS CLI is configured with the [necessary permissions](#required-iam-permissions-for-sample-infrastructure-deployment).
 
 ## Configuring the AWS CLI
 
@@ -167,13 +167,13 @@ Follow the [official documentation](https://docs.aws.amazon.com/cli/latest/userg
 
 There are two main approaches for authenticating the AWS CLI (AWS CLI credentials):
 
-#### Option 1: IAM User with Access Keys (quickest setup for Development/Testing, not recommended for production)
+#### Option 1: IAM User with Access Keys (quickest setup for development/testing, not recommended for production)
 
 This is the quickest method for local development and testing. Follow this [step-by-step guide for IAM user and AWS CLI setup](https://dev.to/binat/install-and-configure-aws-cli-on-windows-1obh). Despite mentioning Windows in the title, most steps are platform-agnostic.
 
 **Security Note**: Using long-lived access keys with broad permissions is convenient for development but is **not recommended for production environments**. Access keys can be exposed or compromised. For production deployments, use IAM roles (when running on AWS services like Lambda, EC2, or ECS) or [SSO authentication](#option-2-aws-sso--iam-identity-center-most-robust-security-focused-approach-recommended-for-productionteams).
 
-#### Option 2: AWS SSO / IAM Identity Center (most robust security focused approach, recommended for Production/Teams)
+#### Option 2: AWS SSO / IAM Identity Center (most robust security-focused approach, recommended for Production/Teams)
 
 For production environments or team-based development, AWS recommends using AWS Single Sign-On (SSO) authentication through the IAM Identity Center.
 
@@ -197,7 +197,7 @@ For reference, AWS provides comprehensive documentation:
 Ensure your credentials have these permissions:
 
 - **Minimum**: `s3:GetObject` for reading files from the S3 bucket you will be accessing
-- **Optional**: `s3:GetObject` and `s3:PutObject` if you plan to save obfuscated data back to S3
+- **Optional**: `s3:PutObject` if you plan to save obfuscated data back to S3
 - **For deploying sample infrastructure**: See the [required IAM Permissions for Sample Infrastructure Deployment](#required-iam-permissions-for-sample-infrastructure-deployment)
 
 </details>
@@ -532,7 +532,7 @@ The current pulumi setup is ready to:
 - Create a sample S3 bucket
 - Load the S3 bucket with test data
 - Create a sample lambda function that can read from that S3 bucket using the **GDPR Obfuscator** package to obfuscate data stored in the S3 bucket, saving the processed data back to the same bucket
-- Configure the necessarys IAM roles and policies following the principle of least privilege
+- Configure the necessary IAM roles and policies following the principle of least privilege
 - Set up CloudWatch logging for monitoring and debugging
 
 #### Required IAM Permissions for Sample Infrastructure Deployment
@@ -633,7 +633,7 @@ Replace `<bucket-name>`,`<file-key>` and the `pii_fields` list with the values t
 
 ### Running performance tests locally
 
-This repository includes a performancy profiling scrip which you can run locally by using the following make command:
+This repository includes a performance profiling script which you can run locally by using the following make command:
 
 ```bash
 make profile-gdpr-obfuscator
