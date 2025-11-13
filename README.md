@@ -8,6 +8,7 @@
 - [GDPR Obfuscator](#gdpr-obfuscator)
   - [Table of Contents](#table-of-contents)
   - [Introduction](#introduction)
+  - [Tech Stack](#tech-stack)
   - [Quick Start](#quick-start)
   - [Requirements](#requirements)
     - [Installing Python](#installing-python)
@@ -73,6 +74,16 @@ The package is designed to ingest data directly from a specified AWS S3 bucket. 
 It is written in [Python](https://www.python.org), is fully tested using [pytest](https://docs.pytest.org/en/stable/), PEP-8 compliant (linted and formatted with [ruff](https://docs.astral.sh/ruff/)), and follows best practices for security and performance (tested using [bandit](https://bandit.readthedocs.io/en/latest/index.html)).
 
 Currently the package supports ingesting and processing CSV, JSON, and Parquet files.
+
+## Tech Stack
+
+The GDPR Obfuscator package is built with modern, high-performance Python libraries:
+
+- **[Polars](https://pola.rs/)**: Used to convert file types into DataFrames and perform data obfuscation. It's a Lightning-fast DataFrame library and a modern alternative to pandas
+- **[Boto3](https://boto3.amazonaws.com/v1/documentation/api/latest/index.html)**: AWS SDK for Python, enabling S3 integration
+- **[types-boto3](https://youtype.github.io/types_boto3_docs/)**: Type stubs for boto3, providing full IDE autocomplete and type safety
+
+These dependencies are automatically installed when you install the package.
 
 ## Quick Start
 
